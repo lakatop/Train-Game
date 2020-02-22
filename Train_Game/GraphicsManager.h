@@ -10,6 +10,7 @@ public:
 	static GraphicsManager* Instance();
 	bool ReturnSucces();
 	void Render();
+	void Clear();
 
 	SDL_Window* window;
 	SDL_Surface* back_buffer;
@@ -18,7 +19,6 @@ public:
 private:
 	GraphicsManager();
 	~GraphicsManager();
-	void Clear();
 	bool Init();
 
 	static GraphicsManager* instance;

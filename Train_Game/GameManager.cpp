@@ -12,26 +12,39 @@ GameManager* GameManager::Instance()
 GameManager::GameManager()
 {
 	graphicsManager = GraphicsManager::Instance();
+	FRAME_RATE = 2;
 	quit = !(graphicsManager->ReturnSucces());
+	timer = Timer::Instance();
 }
 
 GameManager::~GameManager()
 {
-	//instance->Clear();
 	delete instance;
 	instance = NULL;
+	Clear();
+}
+
+void GameManager::Clear()
+{
+	timer->Clear();
+	graphicsManager->Clear();
 }
 
 void GameManager::GameLoop()
 {
 	while (!quit)
 	{
+		timer->Update();
 		while (SDL_PollEvent(&events) != 0)
 		{
 			if (events.type == SDL_QUIT)
 				quit = true;
 		}
-
-		graphicsManager->Render();
+		if (timer->GetDelta() >= 1.0f / FRAME_RATE)
+		{
+			graphicsManager->Render();
+			printf("Delta time = %f\n", timer->GetDelta());
+			timer->Reset();
+		}
 	}
 }

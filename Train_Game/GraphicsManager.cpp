@@ -21,7 +21,6 @@ GraphicsManager::GraphicsManager()
 
 GraphicsManager::~GraphicsManager()
 {
-	GraphicsManager::Clear();
 }
 
 void GraphicsManager::Clear()
