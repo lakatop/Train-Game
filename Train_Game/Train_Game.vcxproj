@@ -92,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,16 +155,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollectibleItem.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TrainComponent.cpp" />
     <ClCompile Include="Train_Game.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollectibleItem.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="LevelManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TrainComponent.h" />
   </ItemGroup>

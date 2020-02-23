@@ -12,6 +12,8 @@ Timer* Timer::Instance()
 Timer::Timer()
 {
 	startTime = SDL_GetTicks();
+	currentTime = 0;
+	deltaTime = 0;
 }
 
 Timer::~Timer()

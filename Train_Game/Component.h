@@ -2,7 +2,9 @@
 #define _COMPONENT_H
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <string>
+#include "GraphicsManager.h"
 
 struct Vector2
 {
@@ -30,6 +32,7 @@ public:
 	virtual Vector2& GetPosition() = 0;
 private:
 	virtual void SetPosition(int x, int y) = 0;
+	virtual SDL_Texture* SetTexture(std::string path) = 0;
 };
 
 #endif

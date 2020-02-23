@@ -1,11 +1,20 @@
 #include "TrainComponent.h"
 
-TrainComponent::TrainComponent(int x, int y, bool loc, TrainComponent* par)
+TrainComponent::TrainComponent(int x, int y, bool loc, std::string name_, TrainComponent* par)
 {
 	pos.x = x;
 	pos.y = y;
 	locomotive = loc;
 	parent = par;
+	name = name_;
+}
+
+TrainComponent::~TrainComponent()
+{
+	SDL_DestroyTexture(texture);
+	texture = NULL;
+	delete parent;
+	parent = NULL;
 }
 
 Vector2& TrainComponent::GetPosition()
@@ -23,4 +32,24 @@ void TrainComponent::UpdatePosition()
 {
 	drawPosition.x = pos.x;
 	drawPosition.y = pos.y;
+}
+
+SDL_Texture* TrainComponent::SetTexture(std::string path)
+{
+	SDL_Texture* tex = NULL;
+	std::string fullPath = path.append("Art/") + name + ".png";
+	SDL_Surface* surface = IMG_Load(fullPath.c_str());
+	if (surface == NULL)
+	{
+		printf("Error loading image : %s\n", IMG_GetError());
+		exit(0);
+	}
+	tex = SDL_CreateTextureFromSurface(graphics->GetRenderer(), surface);
+	if (tex == NULL)
+	{
+		printf("Error creating texture : %s\n", SDL_GetError());
+		exit(0);
+	}
+	SDL_FreeSurface(surface);
+	return tex;
 }

@@ -76,3 +76,8 @@ void GraphicsManager::Render()
 {
 	SDL_RenderPresent(renderer);
 }
+
+SDL_Renderer* GraphicsManager::GetRenderer()
+{
+	return renderer;
+}
