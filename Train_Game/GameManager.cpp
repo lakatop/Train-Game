@@ -84,33 +84,39 @@ void GameManager::CreateComponent(char c, int x, int y)
 	}
 	else if (c == 'B') //brick
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "brick", true));
 	}
 	else if (c == '<') //left_brick
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "left_brick", true,Vector2(-1,0)));
 	}
 	else if (c == '^') //up_brick
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "up_brick", true, Vector2(0, 1)));
 	}
 	else if (c == '>') //right_brick
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "right_brick", true, Vector2(1, 0)));
 	}
 	else if (c == 'v') //down_brick
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "down_brick", true, Vector2(0, -1)));
 	}
 	else if (c == ' ') //empty space
 	{
-
+		add(std::make_unique<NonCollectibleItem>(x, y, "space"));
 	}
 	else
 	{
 		printf("Error : unknown item");
 		exit(0);
 	}
+}
+
+void GameManager::Render()
+{
+	for (auto&& x : components)
+		x->Render();
 }
 
 void GameManager::GameLoop()
@@ -129,7 +135,10 @@ void GameManager::GameLoop()
 		}
 		if (timer->GetDelta() >= 1.0f / FRAME_RATE)
 		{
+			SDL_RenderClear(graphicsManager->GetRenderer());
 			graphicsManager->Render();
+			Render();
+			SDL_RenderPresent(graphicsManager->GetRenderer());
 			printf("Delta time = %f\n", timer->GetDelta());
 			timer->Reset();
 		}

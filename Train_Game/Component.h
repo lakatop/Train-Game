@@ -13,16 +13,16 @@ public:
 
 	int x;
 	int y;
-private:
-	bool operator==(const Vector2& rhs)
-	{
-		return (x == rhs.x && y == rhs.y);
-	}
 	Vector2& operator=(const Vector2& rhs) //not needed yet
 	{
 		this->x = rhs.x;
 		this->y = rhs.y;
 		return *this;
+	}
+private:
+	bool operator==(const Vector2& rhs)
+	{
+		return (x == rhs.x && y == rhs.y);
 	}
 };
 
@@ -30,6 +30,7 @@ class Component
 {
 public:
 	virtual Vector2& GetPosition() = 0;
+	virtual void Render() = 0;
 private:
 	virtual void SetPosition(int x, int y) = 0;
 	virtual SDL_Texture* SetTexture(std::string path) = 0;

@@ -4,6 +4,7 @@
 #include "LevelManager.h"
 #include "TrainComponent.h"
 #include "CollectibleItem.h"
+#include "NonCollectibleItem.h"
 
 class GameManager
 {
@@ -17,6 +18,7 @@ private:
 	void LoadNewLevel(int levelNumber);
 	void CreateComponent(char c, int x, int y);
 	void add(std::unique_ptr<Component>);
+	void Render();
 
 	bool quit;
 	bool loadNewLevel;

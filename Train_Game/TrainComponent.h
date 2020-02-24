@@ -9,6 +9,7 @@ public:
 	TrainComponent(int x, int y, bool loc, std::string name_, TrainComponent* par = NULL);
 	Vector2& GetPosition() override;
 	SDL_Texture* SetTexture(std::string path) override;
+	void Render();
 	~TrainComponent();
 private:
 	void SetPosition(int x, int y) override;
@@ -16,6 +17,7 @@ private:
 
 	TrainComponent* parent;
 	bool locomotive;
+	int IMAGE_SIZE;
 	std::string name;
 	Vector2 pos;
 	Vector2 moveDirection;

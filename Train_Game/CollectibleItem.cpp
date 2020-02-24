@@ -1,6 +1,6 @@
 #include "CollectibleItem.h"
 
-CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, name)
+CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, name_)
 {
 	IMAGE_SIZE = 50;
 	pos.x = x;
@@ -9,6 +9,16 @@ CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, n
 	taken = false;
 	drawPosition.x = x * IMAGE_SIZE;
 	drawPosition.y = y * IMAGE_SIZE;
+	drawPosition.w = IMAGE_SIZE;
+	drawPosition.h = IMAGE_SIZE;
+	graphics = GraphicsManager::Instance();
+	texture = SetTexture(SDL_GetBasePath(), name);
+}
+
+CollectibleItem::~CollectibleItem()
+{
+	SDL_DestroyTexture(texture);
+	texture = NULL;
 }
 
 Vector2& CollectibleItem::GetPosition()
@@ -25,4 +35,9 @@ void CollectibleItem::SetPosition(int x, int y)
 SDL_Texture* CollectibleItem::SetTexture(std::string path, std::string name)
 {
 	return Item::SetTexture(path,name);
+}
+
+void CollectibleItem::Render()
+{
+	SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
 }

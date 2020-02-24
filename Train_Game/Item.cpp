@@ -11,6 +11,14 @@ Item::Item(int x, int y, std::string name_)
 	pos.x = x;
 	pos.y = y;
 	name = name_;
+	graphics = GraphicsManager::Instance();
+	texture = SetTexture(SDL_GetBasePath(), name);
+}
+
+Item::~Item()
+{
+	delete texture;
+	texture = NULL;
 }
 
 Vector2& Item::GetPosition()

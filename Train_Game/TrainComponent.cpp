@@ -4,9 +4,16 @@ TrainComponent::TrainComponent(int x, int y, bool loc, std::string name_, TrainC
 {
 	pos.x = x;
 	pos.y = y;
+	IMAGE_SIZE = 50;
 	locomotive = loc;
 	parent = par;
 	name = name_;
+	drawPosition.x = x * IMAGE_SIZE;
+	drawPosition.y = y * IMAGE_SIZE;
+	drawPosition.w = IMAGE_SIZE;
+	drawPosition.h = IMAGE_SIZE;
+	graphics = GraphicsManager::Instance();
+	texture = SetTexture(SDL_GetBasePath());
 }
 
 TrainComponent::~TrainComponent()
@@ -52,4 +59,9 @@ SDL_Texture* TrainComponent::SetTexture(std::string path)
 	}
 	SDL_FreeSurface(surface);
 	return tex;
+}
+
+void TrainComponent::Render()
+{
+	SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
 }

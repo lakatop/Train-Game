@@ -160,6 +160,7 @@
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="NonCollectibleItem.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TrainComponent.cpp" />
     <ClCompile Include="Train_Game.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="LevelManager.h" />
+    <ClInclude Include="NonCollectibleItem.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TrainComponent.h" />
   </ItemGroup>
