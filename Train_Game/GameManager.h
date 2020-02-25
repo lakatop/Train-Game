@@ -5,6 +5,8 @@
 #include "TrainComponent.h"
 #include "CollectibleItem.h"
 #include "NonCollectibleItem.h"
+#include "InputManager.h"
+#include "Locomotive.h"
 
 class GameManager
 {
@@ -19,6 +21,8 @@ private:
 	void CreateComponent(char c, int x, int y);
 	void add(std::unique_ptr<Component>);
 	void Render();
+	void SetInput();
+	void Update();
 
 	bool quit;
 	bool loadNewLevel;
@@ -28,7 +32,10 @@ private:
 	GraphicsManager* graphicsManager;
 	Timer* timer;
 	LevelManager* levelManager;
+	InputManager* inputManager;
+	Locomotive* locomotive;
 	std::vector<std::unique_ptr<Component>> components;
+	std::vector<std::unique_ptr<TrainComponent>> trainWagons;
 };
 
 #endif

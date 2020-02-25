@@ -158,8 +158,10 @@
     <ClCompile Include="CollectibleItem.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="Locomotive.cpp" />
     <ClCompile Include="NonCollectibleItem.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TrainComponent.cpp" />
@@ -170,8 +172,10 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="LevelManager.h" />
+    <ClInclude Include="Locomotive.h" />
     <ClInclude Include="NonCollectibleItem.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TrainComponent.h" />

@@ -39,5 +39,6 @@ SDL_Texture* CollectibleItem::SetTexture(std::string path, std::string name)
 
 void CollectibleItem::Render()
 {
-	SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
+	if(!taken)
+		SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
 }

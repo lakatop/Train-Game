@@ -18,6 +18,8 @@ GameManager::GameManager()
 	quit = !(graphicsManager->ReturnSucces());
 	timer = Timer::Instance();
 	levelManager = LevelManager::Instance();
+	inputManager = InputManager::Instance();
+	locomotive = NULL;
 }
 
 GameManager::~GameManager()
@@ -32,6 +34,7 @@ void GameManager::Clear()
 	timer->Clear();
 	graphicsManager->Clear();
 	levelManager->Clear();
+	inputManager->Clear();
 }
 
 void GameManager::LoadNewLevel(int levelNumber)
@@ -60,7 +63,7 @@ void GameManager::CreateComponent(char c, int x, int y)
 {
 	if (c == 'R') //locomotive
 	{
-		add(std::make_unique<TrainComponent>(x, y, true, "locomotive"));
+		locomotive = Locomotive::Instance(x,y);
 	}
 	else if (c == 'L') //lighter
 	{
@@ -92,7 +95,7 @@ void GameManager::CreateComponent(char c, int x, int y)
 	}
 	else if (c == '^') //up_brick
 	{
-		add(std::make_unique<NonCollectibleItem>(x, y, "up_brick", true, Vector2(0, 1)));
+		add(std::make_unique<NonCollectibleItem>(x, y, "up_brick", true, Vector2(0, -1)));
 	}
 	else if (c == '>') //right_brick
 	{
@@ -100,7 +103,7 @@ void GameManager::CreateComponent(char c, int x, int y)
 	}
 	else if (c == 'v') //down_brick
 	{
-		add(std::make_unique<NonCollectibleItem>(x, y, "down_brick", true, Vector2(0, -1)));
+		add(std::make_unique<NonCollectibleItem>(x, y, "down_brick", true, Vector2(0, 1)));
 	}
 	else if (c == ' ') //empty space
 	{
@@ -113,8 +116,42 @@ void GameManager::CreateComponent(char c, int x, int y)
 	}
 }
 
+void GameManager::SetInput()
+{
+	if (inputManager->KeyDown(SDL_SCANCODE_UP))
+	{
+		locomotive->moving = true;
+		locomotive->SetMoveDirection(Vector2(0, -1));
+	}
+	else if (inputManager->KeyDown(SDL_SCANCODE_DOWN))
+	{
+		locomotive->moving = true;
+		locomotive->SetMoveDirection(Vector2(0, 1));
+	}
+	else if (inputManager->KeyDown(SDL_SCANCODE_RIGHT))
+	{
+		locomotive->moving = true;
+		locomotive->SetMoveDirection(Vector2(1, 0));
+	}
+	else if (inputManager->KeyDown(SDL_SCANCODE_LEFT))
+	{
+		locomotive->moving = true;
+		locomotive->SetMoveDirection(Vector2(-1, 0));
+	}
+}
+
+void GameManager::Update()
+{
+	locomotive->Update();
+	for (auto it = trainWagons.begin(), itEnd = trainWagons.end(); it != itEnd; it++)
+	{
+		(*it)->Update();
+	}
+}
+
 void GameManager::Render()
 {
+	locomotive->Render();
 	for (auto&& x : components)
 		x->Render();
 }
@@ -133,9 +170,13 @@ void GameManager::GameLoop()
 			if (events.type == SDL_QUIT)
 				quit = true;
 		}
+		inputManager->Update();
+		SetInput();
 		if (timer->GetDelta() >= 1.0f / FRAME_RATE)
 		{
 			SDL_RenderClear(graphicsManager->GetRenderer());
+			if (locomotive != NULL && locomotive->moving)
+				Update();
 			graphicsManager->Render();
 			Render();
 			SDL_RenderPresent(graphicsManager->GetRenderer());

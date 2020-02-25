@@ -1,11 +1,10 @@
 #include "TrainComponent.h"
 
-TrainComponent::TrainComponent(int x, int y, bool loc, std::string name_, TrainComponent* par)
+TrainComponent::TrainComponent(int x, int y, std::string name_, Component* par)
 {
 	pos.x = x;
 	pos.y = y;
 	IMAGE_SIZE = 50;
-	locomotive = loc;
 	parent = par;
 	name = name_;
 	drawPosition.x = x * IMAGE_SIZE;
@@ -59,6 +58,31 @@ SDL_Texture* TrainComponent::SetTexture(std::string path)
 	}
 	SDL_FreeSurface(surface);
 	return tex;
+}
+
+void TrainComponent::SetMoveDirection()
+{
+	moveDirection.x = GetParentDirection().x;
+	moveDirection.y = GetParentDirection().y;
+}
+
+void TrainComponent::Update()
+{
+	SetMoveDirection();
+	pos.x += moveDirection.x;
+	pos.y += moveDirection.y;
+	drawPosition.x = pos.x * IMAGE_SIZE;
+	drawPosition.y = pos.y * IMAGE_SIZE;
+}
+
+Vector2& TrainComponent::GetParentDirection()
+{
+	return parent->GetDirection();
+}
+
+Vector2& TrainComponent::GetDirection()
+{
+	return moveDirection;
 }
 
 void TrainComponent::Render()

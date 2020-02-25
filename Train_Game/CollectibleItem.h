@@ -10,6 +10,9 @@ public:
 	~CollectibleItem();
 	Vector2& GetPosition() override;
 	void Render();
+	virtual Vector2& GetParentDirection() { return pos; }
+	virtual Vector2& GetDirection() { return pos; }
+	virtual void Update() {}
 private:
 	void SetPosition(int x, int y) override;
 	SDL_Texture* SetTexture(std::string path, std::string name) override;
