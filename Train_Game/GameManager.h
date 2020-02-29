@@ -19,12 +19,14 @@ private:
 	void Clear();
 	void LoadNewLevel(int levelNumber);
 	void CreateComponent(char c, int x, int y);
-	void add(std::unique_ptr<Component>);
+	void add(std::unique_ptr<Item>);
 	void Render();
 	void SetInput();
 	void Update();
+	void CheckCollision();
 
 	bool quit;
+	bool explode;
 	bool loadNewLevel;
 	int FRAME_RATE;
 	static GameManager* instance;
@@ -34,7 +36,7 @@ private:
 	LevelManager* levelManager;
 	InputManager* inputManager;
 	Locomotive* locomotive;
-	std::vector<std::unique_ptr<Component>> components;
+	std::vector<std::unique_ptr<Item>> items;
 	std::vector<std::unique_ptr<TrainComponent>> trainWagons;
 };
 

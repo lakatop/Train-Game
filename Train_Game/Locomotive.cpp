@@ -14,15 +14,12 @@ Vector2& Locomotive::GetDirection()
 	return moveDirection;
 }
 
-Vector2& Locomotive::GetParentDirection()
-{
-	return moveDirection;
-}
-
 Locomotive::Locomotive(int x, int y)
 {
 	pos.x = x;
 	pos.y = y;
+	previousPos.x = x;
+	previousPos.y = y;
 	IMAGE_SIZE = 50;
 	moving = false;
 	parent = NULL;
@@ -48,10 +45,17 @@ void Locomotive::SetMoveDirection(const Vector2& m)
 
 void Locomotive::Update()
 {
+	previousPos.x = pos.x;
+	previousPos.y = pos.y;
 	pos.x += moveDirection.x;
 	pos.y += moveDirection.y;
 	drawPosition.x = pos.x * IMAGE_SIZE;
 	drawPosition.y = pos.y * IMAGE_SIZE;
+}
+
+Vector2& Locomotive::GetPreviousPosition()
+{
+	return previousPos;
 }
 
 Vector2& Locomotive::GetPosition() 

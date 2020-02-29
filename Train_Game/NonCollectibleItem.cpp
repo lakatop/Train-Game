@@ -1,13 +1,13 @@
 #include "NonCollectibleItem.h"
 
-NonCollectibleItem::NonCollectibleItem(int x, int y, std::string name_, bool brick_, Vector2 dir) : Item(x, y, name_)
+NonCollectibleItem::NonCollectibleItem(int x, int y, std::string name_, bool brick_, Vector2 dir) : Item(x, y, name_, brick_)
 {
 	IMAGE_SIZE = 50;
 	pos.x = x;
 	pos.y = y;
 	name = name_;
 	brick = brick_;
-	pos = dir;
+	direction = dir;
 	drawPosition.x = x * IMAGE_SIZE;
 	drawPosition.y = y * IMAGE_SIZE;
 	drawPosition.w = IMAGE_SIZE;
@@ -36,6 +36,26 @@ void NonCollectibleItem::SetPosition(int x, int y)
 SDL_Texture* NonCollectibleItem::SetTexture(std::string path, std::string name)
 {
 	return Item::SetTexture(path, name);
+}
+
+bool NonCollectibleItem::Collectible()
+{
+	return false;
+}
+
+Vector2& NonCollectibleItem::GetDirection()
+{
+	return direction;
+}
+
+Vector2& NonCollectibleItem::GetPreviousPosition()
+{
+	return pos;
+}
+
+std::string& NonCollectibleItem::GetName()
+{
+	return name;
 }
 
 void NonCollectibleItem::Render()

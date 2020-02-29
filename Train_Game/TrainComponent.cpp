@@ -4,6 +4,8 @@ TrainComponent::TrainComponent(int x, int y, std::string name_, Component* par)
 {
 	pos.x = x;
 	pos.y = y;
+	previousPos.x = x;
+	previousPos.y = y;
 	IMAGE_SIZE = 50;
 	parent = par;
 	name = name_;
@@ -43,7 +45,7 @@ void TrainComponent::UpdatePosition()
 SDL_Texture* TrainComponent::SetTexture(std::string path)
 {
 	SDL_Texture* tex = NULL;
-	std::string fullPath = path.append("Art/") + name + ".png";
+	std::string fullPath = path.append("Art/") + name + "_wagon.png";
 	SDL_Surface* surface = IMG_Load(fullPath.c_str());
 	if (surface == NULL)
 	{
@@ -69,10 +71,22 @@ void TrainComponent::SetMoveDirection()
 void TrainComponent::Update()
 {
 	SetMoveDirection();
-	pos.x += moveDirection.x;
-	pos.y += moveDirection.y;
+	previousPos.x = pos.x;
+	previousPos.y = pos.y;
+	pos.x = parent->GetPreviousPosition().x;
+	pos.y = parent->GetPreviousPosition().y;
 	drawPosition.x = pos.x * IMAGE_SIZE;
 	drawPosition.y = pos.y * IMAGE_SIZE;
+}
+
+Vector2& TrainComponent::GetPreviousPosition()
+{
+	return previousPos;
+}
+
+Component* TrainComponent::GetPointer()
+{
+	return this;
 }
 
 Vector2& TrainComponent::GetParentDirection()

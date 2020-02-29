@@ -26,15 +26,35 @@ Vector2& CollectibleItem::GetPosition()
 	return Item::GetPosition();
 }
 
+Vector2& CollectibleItem::GetDirection()
+{
+	return pos;
+}
+
+Vector2& CollectibleItem::GetPreviousPosition()
+{
+	return pos;
+}
+
 void CollectibleItem::SetPosition(int x, int y)
 {
 	pos.x = x;
 	pos.y = y;
 }
 
+std::string& CollectibleItem::GetName()
+{
+	return name;
+}
+
 SDL_Texture* CollectibleItem::SetTexture(std::string path, std::string name)
 {
 	return Item::SetTexture(path,name);
+}
+
+bool CollectibleItem::Collectible()
+{
+	return true;
 }
 
 void CollectibleItem::Render()

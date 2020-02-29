@@ -8,7 +8,6 @@
 
 struct Vector2
 {
-public:
 	Vector2(int _x = 0, int _y = 0) : x(_x), y(_y) {}
 
 	int x;
@@ -19,10 +18,15 @@ public:
 		this->y = rhs.y;
 		return *this;
 	}
-private:
+
 	bool operator==(const Vector2& rhs)
 	{
 		return (x == rhs.x && y == rhs.y);
+	}
+
+	bool operator!=(const Vector2& rhs)
+	{
+		return !(Vector2(x,y) == rhs);
 	}
 };
 
@@ -30,8 +34,8 @@ class Component
 {
 public:
 	virtual Vector2& GetPosition() = 0;
+	virtual Vector2& GetPreviousPosition() = 0;
 	virtual void Render() = 0;
-	virtual Vector2& GetParentDirection() = 0;
 	virtual Vector2& GetDirection() = 0;
 	virtual void Update() = 0;
 private:

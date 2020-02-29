@@ -9,16 +9,19 @@ public:
 	NonCollectibleItem(int x, int y, std::string name_, bool brick_ = false, Vector2 dir = (0, 0));
 	~NonCollectibleItem();
 	Vector2& GetPosition() override;
+	std::string& GetName() override;
 	void Render();
-	virtual Vector2& GetParentDirection() { return direction; }
-	virtual Vector2& GetDirection() { return direction; }
-	virtual void Update() {}
+	bool Collectible();
+	Vector2& GetDirection();
+	Vector2& GetPreviousPosition();
+	void Update() {}
+
+	bool brick;
 private:
 	void SetPosition(int x, int y) override;
 	SDL_Texture* SetTexture(std::string path, std::string name) override;
 
 	int IMAGE_SIZE;
-	bool brick;
 	std::string name;
 	Vector2 pos;
 	Vector2 direction;

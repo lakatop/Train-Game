@@ -9,15 +9,18 @@ public:
 	CollectibleItem(int x, int y, std::string name_);
 	~CollectibleItem();
 	Vector2& GetPosition() override;
+	std::string& GetName() override;
 	void Render();
-	virtual Vector2& GetParentDirection() { return pos; }
-	virtual Vector2& GetDirection() { return pos; }
-	virtual void Update() {}
+	bool Collectible();
+	Vector2& GetDirection();
+	Vector2& GetPreviousPosition();
+	void Update() {}
+
+	bool taken;
 private:
 	void SetPosition(int x, int y) override;
 	SDL_Texture* SetTexture(std::string path, std::string name) override;
 
-	bool taken;
 	int IMAGE_SIZE;
 	std::string name;
 	Vector2 pos;

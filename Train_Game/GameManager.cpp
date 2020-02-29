@@ -39,8 +39,9 @@ void GameManager::Clear()
 
 void GameManager::LoadNewLevel(int levelNumber)
 {
-	for (auto&& x : components)	//clear previous components
+	for (auto&& x : items)	//clear previous components
 		x = nullptr;
+	items.clear();
 	int width = levelManager->GetLevelWidth(levelNumber);
 	int height = levelManager->GetLevelHeight(levelNumber);
 	for (int h = 0; h < height; h++)
@@ -54,9 +55,9 @@ void GameManager::LoadNewLevel(int levelNumber)
 	loadNewLevel = false;
 }
 
-void GameManager::add(std::unique_ptr<Component> c)
+void GameManager::add(std::unique_ptr<Item> c)
 {
-	components.push_back(move(c));
+	items.push_back(move(c));
 }
 
 void GameManager::CreateComponent(char c, int x, int y)
@@ -64,6 +65,7 @@ void GameManager::CreateComponent(char c, int x, int y)
 	if (c == 'R') //locomotive
 	{
 		locomotive = Locomotive::Instance(x,y);
+		explode = false;
 	}
 	else if (c == 'L') //lighter
 	{
@@ -149,10 +151,71 @@ void GameManager::Update()
 	}
 }
 
+void GameManager::CheckCollision()
+{
+	Vector2 lPos = locomotive->GetPosition();
+	bool success = false;
+	for (auto&& x : trainWagons)	//collision between locomotive and wagons
+	{
+		Vector2 tPos = x->GetPosition();
+		if (tPos.x == lPos.x && tPos.y == lPos.y)
+		{
+			explode = true;
+			success = true;
+			break;
+		}
+	}
+
+	if (!success)
+	{
+		int it = -1;
+		for (auto&& x : items)	//collision between items and locomotive
+		{
+			it++;
+			if (x->Collectible() == false)	//either brick or space
+			{
+				if (x->brick && x->GetPosition() == locomotive->GetPosition() && x->GetDirection() != locomotive->GetDirection())
+				{
+					explode = true;
+					break;
+				}
+			}
+			else  //collectible item, in case of collision attach wagon
+			{
+				if (x->GetPosition() == locomotive->GetPosition())
+				{
+					if (trainWagons.empty()) // first wagon, its parent = locomotive
+					{
+						Vector2 tPos = locomotive->GetPreviousPosition();
+						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),locomotive));
+					}
+					else
+					{
+						Vector2 tPos = trainWagons.back()->GetPreviousPosition();
+						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(), trainWagons.back()->GetPointer()));
+					}
+					items.erase(items.begin() + it);	//delete item that now represents wagon
+					break;
+				}
+			}
+		}
+	}
+
+	if (trainWagons.empty() == false)	//boundary case when locomotive turns itself against its wagons
+	{
+		if (trainWagons[0]->GetPreviousPosition() == locomotive->GetPosition())
+		{
+			explode = true;
+		}
+	}
+}
+
 void GameManager::Render()
 {
 	locomotive->Render();
-	for (auto&& x : components)
+	for (auto&& x : items)
+		x->Render();
+	for (auto&& x : trainWagons)
 		x->Render();
 }
 
@@ -176,7 +239,12 @@ void GameManager::GameLoop()
 		{
 			SDL_RenderClear(graphicsManager->GetRenderer());
 			if (locomotive != NULL && locomotive->moving)
+			{
 				Update();
+				CheckCollision();
+				if (explode)
+					quit = true;
+			}
 			graphicsManager->Render();
 			Render();
 			SDL_RenderPresent(graphicsManager->GetRenderer());

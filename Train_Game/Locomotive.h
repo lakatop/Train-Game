@@ -11,8 +11,8 @@ public:
 	void Render() override;
 	void SetMoveDirection(const Vector2& m);
 	void Update() override;
-	Vector2& GetParentDirection() override;
 	Vector2& GetDirection() override;
+	Vector2& GetPreviousPosition() override;
 
 	bool moving;
 	Component* parent;
@@ -26,6 +26,7 @@ private:
 	static Locomotive* instance;
 	int IMAGE_SIZE;
 	Vector2 pos;
+	Vector2 previousPos;
 	Vector2 moveDirection;
 	SDL_Rect drawPosition;
 	SDL_Texture* texture;

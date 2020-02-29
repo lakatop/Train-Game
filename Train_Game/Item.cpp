@@ -6,18 +6,19 @@ Item::Item()
 	texture = NULL;
 }
 
-Item::Item(int x, int y, std::string name_)
+Item::Item(int x, int y, std::string name_, bool brick_)
 {
 	pos.x = x;
 	pos.y = y;
 	name = name_;
+	brick = brick_;
 	graphics = GraphicsManager::Instance();
 	texture = SetTexture(SDL_GetBasePath(), name);
 }
 
 Item::~Item()
 {
-	delete texture;
+	 SDL_DestroyTexture(texture);
 	texture = NULL;
 }
 
