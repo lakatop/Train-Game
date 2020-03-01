@@ -13,6 +13,7 @@ public:
 	void Update() override;
 	Vector2& GetDirection() override;
 	Vector2& GetPreviousPosition() override;
+	void Clear();
 
 	bool moving;
 	Component* parent;

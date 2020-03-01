@@ -1,6 +1,6 @@
 #include "TrainComponent.h"
 
-TrainComponent::TrainComponent(int x, int y, std::string name_, Component* par)
+TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, Component* par)
 {
 	pos.x = x;
 	pos.y = y;
@@ -9,6 +9,7 @@ TrainComponent::TrainComponent(int x, int y, std::string name_, Component* par)
 	IMAGE_SIZE = 50;
 	parent = par;
 	name = name_;
+	moveDirection = move_;
 	drawPosition.x = x * IMAGE_SIZE;
 	drawPosition.y = y * IMAGE_SIZE;
 	drawPosition.w = IMAGE_SIZE;
@@ -64,13 +65,23 @@ SDL_Texture* TrainComponent::SetTexture(std::string path)
 
 void TrainComponent::SetMoveDirection()
 {
+	previousMoveDirection = moveDirection;
 	moveDirection.x = GetParentDirection().x;
 	moveDirection.y = GetParentDirection().y;
 }
 
+void TrainComponent::SetPreviousMoveDirection()
+{
+	moveDirection = previousMoveDirection;
+}
+
+Vector2& TrainComponent::GetPreviousMoveDirection()
+{
+	return previousMoveDirection;
+}
+
 void TrainComponent::Update()
 {
-	SetMoveDirection();
 	previousPos.x = pos.x;
 	previousPos.y = pos.y;
 	pos.x = parent->GetPreviousPosition().x;
@@ -101,5 +112,6 @@ Vector2& TrainComponent::GetDirection()
 
 void TrainComponent::Render()
 {
-	SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
+	SDL_RenderCopyEx(graphics->GetRenderer(), texture, NULL, &drawPosition, 
+		graphics->GetFlipAngle(moveDirection.x, moveDirection.y), NULL, graphics->flip);
 }

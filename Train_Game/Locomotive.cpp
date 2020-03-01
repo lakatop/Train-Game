@@ -23,12 +23,19 @@ Locomotive::Locomotive(int x, int y)
 	IMAGE_SIZE = 50;
 	moving = false;
 	parent = NULL;
+	moveDirection.x = 1;
+	moveDirection.y = 0;
 	drawPosition.x = x * IMAGE_SIZE;
 	drawPosition.y = y * IMAGE_SIZE;
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
 	graphics = GraphicsManager::Instance();
 	texture = SetTexture(SDL_GetBasePath());
+}
+
+void Locomotive::Clear()
+{
+	delete instance;
 }
 
 Locomotive::~Locomotive()
@@ -97,5 +104,7 @@ SDL_Texture* Locomotive::SetTexture(std::string path)
 
 void Locomotive::Render()
 {
-	SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
+	double r = graphics->GetFlipAngle(moveDirection.x, moveDirection.y);
+	SDL_RenderCopyEx(graphics->GetRenderer(), texture, NULL, &drawPosition,
+		graphics->GetFlipAngle(moveDirection.x,moveDirection.y),NULL,graphics->flip);
 }

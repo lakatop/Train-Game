@@ -16,6 +16,7 @@ GraphicsManager::GraphicsManager()
 	renderer = NULL;
 	SCREEN_WIDTH = 1000;
 	SCREEN_HEIGT = 800;
+	SetFlipAngleArray();
 	success_initialization = GraphicsManager::Init();
 }
 
@@ -70,6 +71,27 @@ bool GraphicsManager::Init()
 bool GraphicsManager::ReturnSucces()
 {
 	return success_initialization;
+}
+
+double GraphicsManager::GetFlipAngle(int x, int y)
+{
+	if (x == -1 && y == 0)	//left direction : just flip horizontally
+		flip = SDL_FLIP_HORIZONTAL;
+	else
+		flip = SDL_FLIP_NONE;
+	return flipArray[x + 1][y + 1];
+}
+
+void GraphicsManager::SetFlipAngleArray()
+{
+	/*
+	direction vectors : (-1,0), (1,0), (0,1), (0,-1) 
+	to each vector add 1 (because of the negative numbers)
+	and that will be index in flipArray that holds which angle to pass*/
+	flipArray[0][1] = 0;
+	flipArray[2][1] = 0;
+	flipArray[1][2] = 90;
+	flipArray[1][0] = -90;
 }
 
 void GraphicsManager::Render()

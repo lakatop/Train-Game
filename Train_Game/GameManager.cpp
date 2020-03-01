@@ -35,13 +35,15 @@ void GameManager::Clear()
 	graphicsManager->Clear();
 	levelManager->Clear();
 	inputManager->Clear();
+	locomotive->Clear();
+	items.erase(items.begin(), items.end());
+	trainWagons.erase(trainWagons.begin(), trainWagons.end());
 }
 
 void GameManager::LoadNewLevel(int levelNumber)
 {
-	for (auto&& x : items)	//clear previous components
-		x = nullptr;
-	items.clear();
+	items.erase(items.begin(), items.end());	//clear previous components
+	locomotive->Clear();
 	int width = levelManager->GetLevelWidth(levelNumber);
 	int height = levelManager->GetLevelHeight(levelNumber);
 	for (int h = 0; h < height; h++)
@@ -145,10 +147,12 @@ void GameManager::SetInput()
 void GameManager::Update()
 {
 	locomotive->Update();
-	for (auto it = trainWagons.begin(), itEnd = trainWagons.end(); it != itEnd; it++)
+	for (auto it = trainWagons.rbegin(), itend = trainWagons.rend(); it != itend; it++)
 	{
-		(*it)->Update();
+		(*it)->SetMoveDirection();
 	}
+	for (auto&& x : trainWagons)
+		x->Update();
 }
 
 void GameManager::CheckCollision()
@@ -187,12 +191,13 @@ void GameManager::CheckCollision()
 					if (trainWagons.empty()) // first wagon, its parent = locomotive
 					{
 						Vector2 tPos = locomotive->GetPreviousPosition();
-						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),locomotive));
+						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),locomotive->GetDirection(),locomotive));
 					}
 					else
 					{
 						Vector2 tPos = trainWagons.back()->GetPreviousPosition();
-						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(), trainWagons.back()->GetPointer()));
+						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),
+							trainWagons.back()->GetPreviousMoveDirection(), trainWagons.back()->GetPointer()));	//calling GetPreviousMoveDirection for correct wagon drawing
 					}
 					items.erase(items.begin() + it);	//delete item that now represents wagon
 					break;
@@ -212,9 +217,9 @@ void GameManager::CheckCollision()
 
 void GameManager::Render()
 {
-	locomotive->Render();
 	for (auto&& x : items)
 		x->Render();
+	locomotive->Render();
 	for (auto&& x : trainWagons)
 		x->Render();
 }
