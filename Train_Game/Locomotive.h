@@ -13,6 +13,9 @@ public:
 	void Update() override;
 	Vector2& GetDirection() override;
 	Vector2& GetPreviousPosition() override;
+	std::string& GetName() override;
+	bool GetFire() override;
+	void SetFire() override;
 	void Clear();
 
 	bool moving;
@@ -24,8 +27,10 @@ private:
 	Locomotive(int x, int y);
 	~Locomotive();
 
+	bool fire;
 	static Locomotive* instance;
 	int IMAGE_SIZE;
+	std::string name;
 	Vector2 pos;
 	Vector2 previousPos;
 	Vector2 moveDirection;

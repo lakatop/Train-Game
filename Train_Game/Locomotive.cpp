@@ -23,6 +23,8 @@ Locomotive::Locomotive(int x, int y)
 	IMAGE_SIZE = 50;
 	moving = false;
 	parent = NULL;
+	fire = false;
+	name = "locomotive";
 	moveDirection.x = 1;
 	moveDirection.y = 0;
 	drawPosition.x = x * IMAGE_SIZE;
@@ -36,6 +38,7 @@ Locomotive::Locomotive(int x, int y)
 void Locomotive::Clear()
 {
 	delete instance;
+	instance = NULL;
 }
 
 Locomotive::~Locomotive()
@@ -58,6 +61,21 @@ void Locomotive::Update()
 	pos.y += moveDirection.y;
 	drawPosition.x = pos.x * IMAGE_SIZE;
 	drawPosition.y = pos.y * IMAGE_SIZE;
+}
+
+std::string& Locomotive::GetName()
+{
+	return name;
+}
+
+bool Locomotive::GetFire()
+{
+	return fire;
+}
+
+void Locomotive::SetFire()
+{
+	fire = true;
 }
 
 Vector2& Locomotive::GetPreviousPosition()

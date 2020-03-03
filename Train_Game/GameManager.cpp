@@ -14,7 +14,10 @@ GameManager::GameManager()
 	graphicsManager = GraphicsManager::Instance();
 	events.type = SDL_QUIT;
 	FRAME_RATE = 2;
+	SCORE = 0;
+	explode = false;
 	loadNewLevel = true;
+	InitializeScoreBoard();
 	quit = !(graphicsManager->ReturnSucces());
 	timer = Timer::Instance();
 	levelManager = LevelManager::Instance();
@@ -24,9 +27,6 @@ GameManager::GameManager()
 
 GameManager::~GameManager()
 {
-	delete instance;
-	instance = NULL;
-	Clear();
 }
 
 void GameManager::Clear()
@@ -38,11 +38,23 @@ void GameManager::Clear()
 	locomotive->Clear();
 	items.erase(items.begin(), items.end());
 	trainWagons.erase(trainWagons.begin(), trainWagons.end());
+	delete instance;
+	instance = NULL;
+}
+
+void GameManager::InitializeScoreBoard()
+{
+	scoreBoard.insert(std::make_pair("lighter", 1000));
+	scoreBoard.insert(std::make_pair("cherry", 500));
+	scoreBoard.insert(std::make_pair("tree", 1000));
+	scoreBoard.insert(std::make_pair("wine", 750));
+	scoreBoard.insert(std::make_pair("rotten_apple", -1000));
 }
 
 void GameManager::LoadNewLevel(int levelNumber)
 {
 	items.erase(items.begin(), items.end());	//clear previous components
+	trainWagons.erase(trainWagons.begin(),trainWagons.end());
 	locomotive->Clear();
 	int width = levelManager->GetLevelWidth(levelNumber);
 	int height = levelManager->GetLevelHeight(levelNumber);
@@ -155,11 +167,35 @@ void GameManager::Update()
 		x->Update();
 }
 
+void GameManager::UpdateScore()
+{
+	int tempScore = 0;
+	for (auto&& x : trainWagons)
+	{
+		if (!x->GetFire())	// you can increase your score only if the wagon is not on fire, wagons on fire have 0 value
+			tempScore += scoreBoard.find(x->GetName())->second;		//else find specific value of an item this wagon is carrying and add it to the score
+	}
+	SCORE = tempScore;
+}
+
+bool GameManager::UpdateFire()
+{
+	for (auto it = trainWagons.rbegin(), itend = trainWagons.rend(); it != itend; it++)
+	{
+		if ((*it)->GetFire() && !((*it)->parent->GetFire()))	//find the border between the last burning wagon and the first non-burnig wagon
+		{
+			(*it)->parent->SetFire();	//set the first non-burning wagon to fire and break(since we want to spread fire only one wagon by one iteration)
+			break;
+		}
+	}
+	return locomotive->GetFire();		//return if the locomotive is on fire
+}
+
 void GameManager::CheckCollision()
 {
 	Vector2 lPos = locomotive->GetPosition();
 	bool success = false;
-	for (auto&& x : trainWagons)	//collision between locomotive and wagons
+	for (auto&& x : trainWagons)	//collision between the locomotive and wagons
 	{
 		Vector2 tPos = x->GetPosition();
 		if (tPos.x == lPos.x && tPos.y == lPos.y)
@@ -173,7 +209,7 @@ void GameManager::CheckCollision()
 	if (!success)
 	{
 		int it = -1;
-		for (auto&& x : items)	//collision between items and locomotive
+		for (auto&& x : items)	//collision between items and the locomotive
 		{
 			it++;
 			if (x->Collectible() == false)	//either brick or space
@@ -188,7 +224,7 @@ void GameManager::CheckCollision()
 			{
 				if (x->GetPosition() == locomotive->GetPosition())
 				{
-					if (trainWagons.empty()) // first wagon, its parent = locomotive
+					if (trainWagons.empty()) //first wagon, its parent = locomotive
 					{
 						Vector2 tPos = locomotive->GetPreviousPosition();
 						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),locomotive->GetDirection(),locomotive));
@@ -198,6 +234,7 @@ void GameManager::CheckCollision()
 						Vector2 tPos = trainWagons.back()->GetPreviousPosition();
 						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),
 							trainWagons.back()->GetPreviousMoveDirection(), trainWagons.back()->GetPointer()));	//calling GetPreviousMoveDirection for correct wagon drawing
+						trainWagons.back()->CheckFireCollision();	// check if there isnt collision between wood and lighter that would trigger fire
 					}
 					items.erase(items.begin() + it);	//delete item that now represents wagon
 					break;
@@ -247,13 +284,14 @@ void GameManager::GameLoop()
 			{
 				Update();
 				CheckCollision();
-				if (explode)
+				if (explode || UpdateFire())
 					quit = true;
+				UpdateScore();
 			}
 			graphicsManager->Render();
 			Render();
 			SDL_RenderPresent(graphicsManager->GetRenderer());
-			printf("Delta time = %f\n", timer->GetDelta());
+			printf("SCORE : %d\n", SCORE);
 			timer->Reset();
 		}
 	}

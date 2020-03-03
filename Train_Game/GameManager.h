@@ -7,28 +7,35 @@
 #include "NonCollectibleItem.h"
 #include "InputManager.h"
 #include "Locomotive.h"
+#include <map>
+
 
 class GameManager
 {
 public:
 	static GameManager* Instance();
 	void GameLoop();
-private:
-	GameManager();
 	~GameManager();
 	void Clear();
+private:
+	GameManager();
 	void LoadNewLevel(int levelNumber);
 	void CreateComponent(char c, int x, int y);
 	void add(std::unique_ptr<Item>);
 	void Render();
 	void SetInput();
 	void Update();
+	void UpdateScore();
+	bool UpdateFire();
 	void CheckCollision();
+
+	void InitializeScoreBoard();
 
 	bool quit;
 	bool explode;
 	bool loadNewLevel;
-	int FRAME_RATE;
+	float FRAME_RATE;
+	int SCORE;
 	static GameManager* instance;
 	SDL_Event events;
 	GraphicsManager* graphicsManager;
@@ -38,6 +45,7 @@ private:
 	Locomotive* locomotive;
 	std::vector<std::unique_ptr<Item>> items;
 	std::vector<std::unique_ptr<TrainComponent>> trainWagons;
+	std::map<std::string, int> scoreBoard;
 };
 
 #endif

@@ -16,8 +16,6 @@ InputManager::InputManager()
 
 InputManager::~InputManager()
 {
-	delete keyboardStates;
-	keyboardStates = NULL;
 }
 
 void InputManager::Clear()

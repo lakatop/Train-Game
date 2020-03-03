@@ -14,15 +14,19 @@ TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, C
 	drawPosition.y = y * IMAGE_SIZE;
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
+	fire = false;
 	graphics = GraphicsManager::Instance();
-	texture = SetTexture(SDL_GetBasePath());
+	std::string basePath = SDL_GetBasePath();
+	texture = SetTexture(basePath + "Art/" + name + "_wagon.png");
+	fireTex = SetTexture(basePath + "Art/fire.png");
 }
 
 TrainComponent::~TrainComponent()
 {
 	SDL_DestroyTexture(texture);
 	texture = NULL;
-	delete parent;
+	SDL_DestroyTexture(fireTex);
+	fireTex = NULL;
 	parent = NULL;
 }
 
@@ -46,8 +50,7 @@ void TrainComponent::UpdatePosition()
 SDL_Texture* TrainComponent::SetTexture(std::string path)
 {
 	SDL_Texture* tex = NULL;
-	std::string fullPath = path.append("Art/") + name + "_wagon.png";
-	SDL_Surface* surface = IMG_Load(fullPath.c_str());
+	SDL_Surface* surface = IMG_Load(path.c_str());
 	if (surface == NULL)
 	{
 		printf("Error loading image : %s\n", IMG_GetError());
@@ -90,6 +93,31 @@ void TrainComponent::Update()
 	drawPosition.y = pos.y * IMAGE_SIZE;
 }
 
+void TrainComponent::CheckFireCollision()
+{
+	//check whether there is a tree and a lighter wagon next to each other
+	if ((this->GetName() == "tree" && parent->GetName() == "lighter")
+		|| (this->GetName() == "lighter" && parent->GetName() == "tree"))
+	{
+		this->fire = true;
+	}
+}
+
+std::string& TrainComponent::GetName()
+{
+	return name;
+}
+
+bool TrainComponent::GetFire()
+{
+	return fire;
+}
+
+void TrainComponent::SetFire()
+{
+	fire = true;
+}
+
 Vector2& TrainComponent::GetPreviousPosition()
 {
 	return previousPos;
@@ -114,4 +142,7 @@ void TrainComponent::Render()
 {
 	SDL_RenderCopyEx(graphics->GetRenderer(), texture, NULL, &drawPosition, 
 		graphics->GetFlipAngle(moveDirection.x, moveDirection.y), NULL, graphics->flip);
+	if(fire)
+		SDL_RenderCopyEx(graphics->GetRenderer(), fireTex, NULL, &drawPosition,
+			graphics->GetFlipAngle(moveDirection.x, moveDirection.y), NULL, graphics->flip);
 }

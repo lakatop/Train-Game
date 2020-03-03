@@ -15,6 +15,8 @@ public:
 	Vector2& GetDirection();
 	Vector2& GetPreviousPosition();
 	void Update() {}
+	bool GetFire() { return false; }
+	void SetFire() {}
 
 	bool taken;
 private:

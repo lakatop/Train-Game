@@ -4,6 +4,7 @@ Item::Item()
 {
 	graphics = NULL;
 	texture = NULL;
+	brick = true;
 }
 
 Item::Item(int x, int y, std::string name_, bool brick_)

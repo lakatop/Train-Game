@@ -8,7 +8,7 @@ class Item : public Component
 public:
 	Item(int x, int y, std::string name_, bool brick_ = false);
 	Item();
-	~Item();
+	virtual ~Item();
 	Vector2& GetPosition() override;
 	SDL_Texture* SetTexture(std::string path) override;
 	virtual std::string& GetName() = 0;
@@ -18,6 +18,8 @@ public:
 	virtual Vector2& GetDirection() = 0;
 	virtual void Update() = 0;
 	virtual bool Collectible() = 0;
+	virtual bool GetFire() = 0;
+	virtual void SetFire() = 0;
 
 	bool brick;
 private:
