@@ -8,6 +8,7 @@
 #include "InputManager.h"
 #include "Locomotive.h"
 #include <map>
+#include <algorithm>
 
 
 class GameManager

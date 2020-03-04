@@ -46,18 +46,18 @@ public:
 	static LevelManager* Instance();
 	void LoadLevels();
 	void Clear();
-	int GetActualLevel();
 	int GetLevelCount();
 	int GetLevelWidth(int levelNumber);
 	int GetLevelHeight(int levelNumber);
 	char GetLevelChar(int x, int y, int levelNumber);
+
+	int actualLevel;
 private:
 	LevelManager();
 	~LevelManager();
 
 	static LevelManager* instance;
 	std::vector<std::unique_ptr<LevelMap>> levels;	//vector of levels
-	int actualLevel;
 	int levelCount;
 };
 

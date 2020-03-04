@@ -169,13 +169,12 @@ void GameManager::Update()
 
 void GameManager::UpdateScore()
 {
-	int tempScore = 0;
+	SCORE = 0;
 	for (auto&& x : trainWagons)
 	{
 		if (!x->GetFire())	// you can increase your score only if the wagon is not on fire, wagons on fire have 0 value
-			tempScore += scoreBoard.find(x->GetName())->second;		//else find specific value of an item this wagon is carrying and add it to the score
+			SCORE += scoreBoard.find(x->GetName())->second;		//else find specific value of an item this wagon is carrying and add it to the score
 	}
-	SCORE = tempScore;
 }
 
 bool GameManager::UpdateFire()
@@ -267,7 +266,8 @@ void GameManager::GameLoop()
 	{
 		if (loadNewLevel)
 		{
-			LoadNewLevel(levelManager->GetActualLevel());
+			levelManager->actualLevel++;
+			LoadNewLevel(levelManager->actualLevel);
 		}
 		timer->Update();
 		while (SDL_PollEvent(&events) != 0)
@@ -288,7 +288,7 @@ void GameManager::GameLoop()
 					quit = true;
 				UpdateScore();
 			}
-			graphicsManager->Render();
+			graphicsManager->Render("Score : " + std::to_string(SCORE), levelManager->GetLevelHeight(levelManager->actualLevel) * 50);
 			Render();
 			SDL_RenderPresent(graphicsManager->GetRenderer());
 			printf("SCORE : %d\n", SCORE);

@@ -27,11 +27,6 @@ void LevelManager::Clear()
 	delete instance;
 }
 
-int LevelManager::GetActualLevel()
-{
-	return ++actualLevel;
-}
-
 int LevelManager::GetLevelCount()
 {
 	return levelCount;
