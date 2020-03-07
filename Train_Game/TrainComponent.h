@@ -6,12 +6,13 @@
 class TrainComponent : public Component
 {
 public:
-	TrainComponent(int x, int y, std::string name_, Vector2 move_, Component* par = NULL);
+	TrainComponent(int x, int y, std::string name_, Vector2 move_, bool last_ = false, Component* par = NULL);
 	Vector2& GetPosition() override;
 	SDL_Texture* SetTexture(std::string path) override;
 	std::string& GetName() override;
 	bool GetFire() override;
 	void SetFire() override;
+	bool GetLast();
 	void Render();
 	~TrainComponent();
 	void Update();
@@ -29,6 +30,7 @@ private:
 	void SetPosition(int x, int y) override;
 	void UpdatePosition();
 
+	bool last;
 	bool fire;
 	int IMAGE_SIZE;
 	std::string name;

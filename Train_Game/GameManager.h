@@ -8,6 +8,7 @@
 #include "InputManager.h"
 #include "Locomotive.h"
 #include <map>
+#include <set>
 #include <algorithm>
 
 
@@ -28,6 +29,7 @@ private:
 	void Update();
 	void UpdateScore();
 	bool UpdateFire();
+	void UpdateGate();
 	void CheckCollision();
 
 	void InitializeScoreBoard();
@@ -47,6 +49,7 @@ private:
 	std::vector<std::unique_ptr<Item>> items;
 	std::vector<std::unique_ptr<TrainComponent>> trainWagons;
 	std::map<std::string, int> scoreBoard;
+	std::multiset<std::string> basket;
 };
 
 #endif

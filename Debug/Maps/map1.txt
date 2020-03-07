@@ -3,9 +3,9 @@
 BBBBBBBBBBBBBBBBBBBB
 B                  B
 B  TTT   CCC    >  B
-B                  B
+B        F         B
 B               v  B
-B  R     AAA       B
+B  R     AAA       G
 B               <  B
 B  LLL   WWW  ^    B
 B                  B

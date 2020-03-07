@@ -1,12 +1,13 @@
 #include "TrainComponent.h"
 
-TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, Component* par)
+TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, bool last_, Component* par)
 {
 	pos.x = x;
 	pos.y = y;
 	previousPos.x = x;
 	previousPos.y = y;
 	IMAGE_SIZE = 50;
+	last = last_;
 	parent = par;
 	name = name_;
 	moveDirection = move_;
@@ -116,6 +117,11 @@ bool TrainComponent::GetFire()
 void TrainComponent::SetFire()
 {
 	fire = true;
+}
+
+bool TrainComponent::GetLast()
+{
+	return last;
 }
 
 Vector2& TrainComponent::GetPreviousPosition()

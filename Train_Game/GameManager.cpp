@@ -49,12 +49,14 @@ void GameManager::InitializeScoreBoard()
 	scoreBoard.insert(std::make_pair("tree", 1000));
 	scoreBoard.insert(std::make_pair("wine", 750));
 	scoreBoard.insert(std::make_pair("rotten_apple", -1000));
+	scoreBoard.insert(std::make_pair("final", 5000));
 }
 
 void GameManager::LoadNewLevel(int levelNumber)
 {
 	items.erase(items.begin(), items.end());	//clear previous components
 	trainWagons.erase(trainWagons.begin(),trainWagons.end());
+	basket.erase(basket.begin(), basket.end());
 	locomotive->Clear();
 	int width = levelManager->GetLevelWidth(levelNumber);
 	int height = levelManager->GetLevelHeight(levelNumber);
@@ -67,6 +69,12 @@ void GameManager::LoadNewLevel(int levelNumber)
 		}
 	}
 	loadNewLevel = false;
+	for (auto&& x : items)	//fill up the basket with all collectible items
+	{
+		if (x->Collectible())
+			basket.insert(x->GetName());
+	}
+	locomotive->GetDirection();
 }
 
 void GameManager::add(std::unique_ptr<Item> c)
@@ -101,9 +109,17 @@ void GameManager::CreateComponent(char c, int x, int y)
 	{
 		add(std::make_unique<CollectibleItem>(x, y, "rotten_apple"));
 	}
+	else if (c == 'F')
+	{
+		add(std::make_unique<CollectibleItem>(x, y, "final"));
+	}
 	else if (c == 'B') //brick
 	{
 		add(std::make_unique<NonCollectibleItem>(x, y, "brick", true));
+	}
+	else if (c == 'G')
+	{
+		add(std::make_unique<NonCollectibleItem>(x, y, "gate", true));
 	}
 	else if (c == '<') //left_brick
 	{
@@ -165,6 +181,7 @@ void GameManager::Update()
 	}
 	for (auto&& x : trainWagons)
 		x->Update();
+	UpdateGate();
 }
 
 void GameManager::UpdateScore()
@@ -188,6 +205,23 @@ bool GameManager::UpdateFire()
 		}
 	}
 	return locomotive->GetFire();		//return if the locomotive is on fire
+}
+
+void GameManager::UpdateGate()
+{
+	if (basket.empty())	//all collectible items are picked up, now i can open the gate
+	{
+		int pos = -1;
+		for (auto&& x : items)
+		{
+			pos++;
+			if (x->GetName() == "gate")
+				break;
+		}
+		Vector2 v = (*(items.begin() + pos))->GetPosition();	// get gate's position
+		items.erase(items.begin() + pos);	//delete gate from items ...
+		add(std::make_unique<NonCollectibleItem>(v.x,v.y, "open_gate"));	//... and replace it by open gate
+	}
 }
 
 void GameManager::CheckCollision()
@@ -221,22 +255,27 @@ void GameManager::CheckCollision()
 			}
 			else  //collectible item, in case of collision attach wagon
 			{
-				if (x->GetPosition() == locomotive->GetPosition())
+				if (trainWagons.empty() || (!trainWagons.empty() && !trainWagons.back()->GetLast())) //check if the last wagon isnt carrying "final" item, if yes, you cant pick any more items
 				{
-					if (trainWagons.empty()) //first wagon, its parent = locomotive
+					if (x->GetPosition() == locomotive->GetPosition())
 					{
-						Vector2 tPos = locomotive->GetPreviousPosition();
-						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),locomotive->GetDirection(),locomotive));
+						bool last = (x->GetName() == "final") ? true : false;	//if this item represents "final" item, than set true, otherwise false
+						if (trainWagons.empty()) //first wagon, its parent = locomotive
+						{
+							Vector2 tPos = locomotive->GetPreviousPosition();
+							trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(), locomotive->GetDirection(), last, locomotive));
+						}
+						else
+						{
+							Vector2 tPos = trainWagons.back()->GetPreviousPosition();
+							trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),
+								trainWagons.back()->GetPreviousMoveDirection(), last, trainWagons.back()->GetPointer()));	//calling GetPreviousMoveDirection for correct wagon drawing
+							trainWagons.back()->CheckFireCollision();	// check if there isnt collision between wood and lighter that would trigger fire
+						}
+						basket.erase(basket.lower_bound(x->GetName()));	//delete item that now represents wagon from basket...
+						items.erase(items.begin() + it);	//... and also delete it from items
+						break;
 					}
-					else
-					{
-						Vector2 tPos = trainWagons.back()->GetPreviousPosition();
-						trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),
-							trainWagons.back()->GetPreviousMoveDirection(), trainWagons.back()->GetPointer()));	//calling GetPreviousMoveDirection for correct wagon drawing
-						trainWagons.back()->CheckFireCollision();	// check if there isnt collision between wood and lighter that would trigger fire
-					}
-					items.erase(items.begin() + it);	//delete item that now represents wagon
-					break;
 				}
 			}
 		}
@@ -291,7 +330,7 @@ void GameManager::GameLoop()
 			graphicsManager->Render("Score : " + std::to_string(SCORE), levelManager->GetLevelHeight(levelManager->actualLevel) * 50);
 			Render();
 			SDL_RenderPresent(graphicsManager->GetRenderer());
-			printf("SCORE : %d\n", SCORE);
+			printf("basket size : %d\n", basket.size());
 			timer->Reset();
 		}
 	}
