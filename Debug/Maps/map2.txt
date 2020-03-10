@@ -1,0 +1,12 @@
+20
+10
+BBBBBBBBBBBBBBBBBBBB
+B>>>>>>>>>>>>>>>>>>B
+B^                vB
+B^                vB
+B^R   WWWWWWWWW    G
+B^                vB
+B^                vB
+B^                vB
+B^<<<<<<<<<<<<<<<<vB
+BBBBBBBBBBBBBBBBBBBB

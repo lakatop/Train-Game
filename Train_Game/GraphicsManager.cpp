@@ -17,7 +17,6 @@ GraphicsManager::GraphicsManager()
 	renderRect = { 0,0,0,0 };
 	SCREEN_WIDTH = 1000;
 	SCREEN_HEIGT = 800;
-	IMAGE_SIZE = 50;
 	FONT_SIZE = 20;
 	SetFlipAngleArray();
 	success_initialization = GraphicsManager::Init();
@@ -83,9 +82,55 @@ bool GraphicsManager::Init()
 	return true;
 }
 
+SDL_Texture* GraphicsManager::SetTexture(std::string path, std::string name)
+{
+	SDL_Texture* tex = NULL;
+	std::string fullPath = path.append("Art/") + name + ".png";
+	SDL_Surface* surface = IMG_Load(fullPath.c_str());
+	if (surface == NULL)
+	{
+		printf("Error loading image : %s\n", IMG_GetError());
+		exit(0);
+	}
+	tex = SDL_CreateTextureFromSurface(renderer, surface);
+	if (tex == NULL)
+	{
+		printf("Error creating texture : %s\n", SDL_GetError());
+		exit(0);
+	}
+	SDL_FreeSurface(surface);
+	return tex;
+}
+
 bool GraphicsManager::ReturnSucces()
 {
 	return success_initialization;
+}
+
+int GraphicsManager::SetPictureSize()
+{
+	int screenWidth = 0;
+	int screenHeigt = 0;
+	SDL_GetWindowSize(window, &screenWidth, &screenHeigt);
+	int sizeWidth = screenWidth / LevelManager::Instance()->GetLevelWidth(LevelManager::Instance()->actualLevel);
+	int sizeHeight = screenHeigt / LevelManager::Instance()->GetLevelHeight(LevelManager::Instance()->actualLevel);
+	return std::min(sizeWidth, sizeHeight);
+}
+
+int GraphicsManager::GetHeightOffset()
+{
+	int levelHeight = SetPictureSize() * LevelManager::Instance()->GetLevelHeight(LevelManager::Instance()->actualLevel);
+	int screenHeight = 0;
+	SDL_GetWindowSize(window, NULL, &screenHeight);
+	return (screenHeight - levelHeight) / 2;
+}
+
+int GraphicsManager::GetWidthOffSet()
+{
+	int levelWidth = SetPictureSize() * LevelManager::Instance()->GetLevelWidth(LevelManager::Instance()->actualLevel);
+	int screenWidth = 0;
+	SDL_GetWindowSize(window, &screenWidth, NULL);
+	return (screenWidth - levelWidth) / 2;
 }
 
 double GraphicsManager::GetFlipAngle(int x, int y)
@@ -111,7 +156,7 @@ void GraphicsManager::SetFlipAngleArray()
 
 SDL_Texture* GraphicsManager::GetText(std::string path)
 {
-	if (auto it = text.find(path) == text.end())
+	if (text.find(path) == text.end())
 		text.insert(std::make_pair(path, CreateText(path)));
 
 	SDL_QueryTexture(text.find(path)->second, NULL, NULL, &renderRect.w, &renderRect.h);	//set width and height of new texture to renderRect for later rendering
@@ -147,9 +192,19 @@ SDL_Texture* GraphicsManager::CreateText(std::string text)
 
 void GraphicsManager::Render(std::string path, int height)
 {
+	//render SCORE
 	renderRect.y = height + FONT_SIZE;
 	SDL_RenderCopy(renderer, GetText(path), NULL, &renderRect);
-	SDL_RenderPresent(renderer);
+}
+
+void GraphicsManager::RenderSpecialScreen(std::string name)
+{
+	SDL_Texture* tex = SetTexture(SDL_GetBasePath(), name);
+	SDL_Rect rect;
+	SDL_GetWindowSize(window, &rect.w, &rect.h);
+	rect.x = 0;
+	rect.y = 0;
+	SDL_RenderCopy(renderer, tex, NULL, &rect);
 }
 
 SDL_Renderer* GraphicsManager::GetRenderer()

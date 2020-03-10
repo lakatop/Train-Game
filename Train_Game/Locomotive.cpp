@@ -20,19 +20,19 @@ Locomotive::Locomotive(int x, int y)
 	pos.y = y;
 	previousPos.x = x;
 	previousPos.y = y;
-	IMAGE_SIZE = 50;
 	moving = false;
 	parent = NULL;
 	fire = false;
 	name = "locomotive";
 	moveDirection.x = 1;
 	moveDirection.y = 0;
-	drawPosition.x = x * IMAGE_SIZE;
-	drawPosition.y = y * IMAGE_SIZE;
+	graphics = GraphicsManager::Instance();
+	IMAGE_SIZE = graphics->SetPictureSize();
+	drawPosition.x = x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = y * IMAGE_SIZE + graphics->GetHeightOffset();
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
-	graphics = GraphicsManager::Instance();
-	texture = SetTexture(SDL_GetBasePath());
+	texture = graphics->SetTexture(SDL_GetBasePath(),name);
 }
 
 void Locomotive::Clear()
@@ -59,8 +59,8 @@ void Locomotive::Update()
 	previousPos.y = pos.y;
 	pos.x += moveDirection.x;
 	pos.y += moveDirection.y;
-	drawPosition.x = pos.x * IMAGE_SIZE;
-	drawPosition.y = pos.y * IMAGE_SIZE;
+	drawPosition.x = pos.x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = pos.y * IMAGE_SIZE + graphics->GetHeightOffset();
 }
 
 std::string& Locomotive::GetName()
@@ -92,12 +92,6 @@ void Locomotive::SetPosition(int x, int y)
 {
 	pos.x = x;
 	pos.y = y;
-}
-
-void Locomotive::UpdatePosition()
-{
-	drawPosition.x = pos.x;
-	drawPosition.y = pos.y;
 }
 
 SDL_Texture* Locomotive::SetTexture(std::string path)

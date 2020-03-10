@@ -45,7 +45,6 @@ public:
 	virtual void SetFire() = 0;
 private:
 	virtual void SetPosition(int x, int y) = 0;
-	virtual SDL_Texture* SetTexture(std::string path) = 0;
 };
 
 #endif

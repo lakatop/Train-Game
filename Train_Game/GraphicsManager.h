@@ -6,6 +6,7 @@
 #include <SDL_ttf.h>
 #include <map>
 #include <string>
+#include "LevelManager.h"
 
 class GraphicsManager
 {
@@ -14,7 +15,12 @@ public:
 	bool ReturnSucces();
 	void Render(std::string path, int height);
 	void Clear();
+	void RenderSpecialScreen(std::string name);
+	int SetPictureSize();
+	int GetWidthOffSet();
+	int GetHeightOffset();
 	SDL_Renderer* GetRenderer();
+	SDL_Texture* SetTexture(std::string path, std::string name);
 	double GetFlipAngle(int x, int y);
 
 	SDL_Window* window;
@@ -35,7 +41,6 @@ private:
 	std::map<std::string, SDL_Texture*> text;
 	bool success_initialization;
 	double flipArray[3][3];
-	int IMAGE_SIZE;
 	int FONT_SIZE;
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGT;

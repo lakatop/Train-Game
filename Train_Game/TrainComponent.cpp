@@ -6,20 +6,20 @@ TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, b
 	pos.y = y;
 	previousPos.x = x;
 	previousPos.y = y;
-	IMAGE_SIZE = 50;
 	last = last_;
 	parent = par;
 	name = name_;
 	moveDirection = move_;
-	drawPosition.x = x * IMAGE_SIZE;
-	drawPosition.y = y * IMAGE_SIZE;
-	drawPosition.w = IMAGE_SIZE;
-	drawPosition.h = IMAGE_SIZE;
 	fire = false;
 	graphics = GraphicsManager::Instance();
+	IMAGE_SIZE = graphics->SetPictureSize();
+	drawPosition.x = x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = y * IMAGE_SIZE + graphics->GetHeightOffset();
+	drawPosition.w = IMAGE_SIZE;
+	drawPosition.h = IMAGE_SIZE;
 	std::string basePath = SDL_GetBasePath();
-	texture = SetTexture(basePath + "Art/" + name + "_wagon.png");
-	fireTex = SetTexture(basePath + "Art/fire.png");
+	texture = graphics->SetTexture(basePath,name + "_wagon");
+	fireTex = graphics->SetTexture(basePath,"fire");
 }
 
 TrainComponent::~TrainComponent()
@@ -40,31 +40,6 @@ void TrainComponent::SetPosition(int x, int y)
 {
 	pos.x = x;
 	pos.y = y;
-}
-
-void TrainComponent::UpdatePosition()
-{
-	drawPosition.x = pos.x;
-	drawPosition.y = pos.y;
-}
-
-SDL_Texture* TrainComponent::SetTexture(std::string path)
-{
-	SDL_Texture* tex = NULL;
-	SDL_Surface* surface = IMG_Load(path.c_str());
-	if (surface == NULL)
-	{
-		printf("Error loading image : %s\n", IMG_GetError());
-		exit(0);
-	}
-	tex = SDL_CreateTextureFromSurface(graphics->GetRenderer(), surface);
-	if (tex == NULL)
-	{
-		printf("Error creating texture : %s\n", SDL_GetError());
-		exit(0);
-	}
-	SDL_FreeSurface(surface);
-	return tex;
 }
 
 void TrainComponent::SetMoveDirection()
@@ -90,8 +65,8 @@ void TrainComponent::Update()
 	previousPos.y = pos.y;
 	pos.x = parent->GetPreviousPosition().x;
 	pos.y = parent->GetPreviousPosition().y;
-	drawPosition.x = pos.x * IMAGE_SIZE;
-	drawPosition.y = pos.y * IMAGE_SIZE;
+	drawPosition.x = pos.x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = pos.y * IMAGE_SIZE + graphics->GetHeightOffset();
 }
 
 void TrainComponent::CheckFireCollision()

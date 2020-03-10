@@ -16,7 +16,8 @@ GameManager::GameManager()
 	FRAME_RATE = 2;
 	SCORE = 0;
 	explode = false;
-	loadNewLevel = true;
+	loadNewLevel = false;
+	levelSuccess = false;
 	InitializeScoreBoard();
 	quit = !(graphicsManager->ReturnSucces());
 	timer = Timer::Instance();
@@ -38,6 +39,7 @@ void GameManager::Clear()
 	locomotive->Clear();
 	items.erase(items.begin(), items.end());
 	trainWagons.erase(trainWagons.begin(), trainWagons.end());
+	basket.erase(basket.begin(), basket.end());
 	delete instance;
 	instance = NULL;
 }
@@ -150,25 +152,61 @@ void GameManager::CreateComponent(char c, int x, int y)
 
 void GameManager::SetInput()
 {
-	if (inputManager->KeyDown(SDL_SCANCODE_UP))
+	if (inputManager->KeyDown(SDL_SCANCODE_ESCAPE))
 	{
-		locomotive->moving = true;
-		locomotive->SetMoveDirection(Vector2(0, -1));
+		quit = true;
 	}
-	else if (inputManager->KeyDown(SDL_SCANCODE_DOWN))
+	if (!explode && !levelSuccess && locomotive != NULL)	//no exposion, no finished level, no start screen
 	{
-		locomotive->moving = true;
-		locomotive->SetMoveDirection(Vector2(0, 1));
+		if (inputManager->KeyDown(SDL_SCANCODE_UP))
+		{
+			locomotive->moving = true;
+			locomotive->SetMoveDirection(Vector2(0, -1));
+		}
+		else if (inputManager->KeyDown(SDL_SCANCODE_DOWN))
+		{
+			locomotive->moving = true;
+			locomotive->SetMoveDirection(Vector2(0, 1));
+		}
+		else if (inputManager->KeyDown(SDL_SCANCODE_RIGHT))
+		{
+			locomotive->moving = true;
+			locomotive->SetMoveDirection(Vector2(1, 0));
+		}
+		else if (inputManager->KeyDown(SDL_SCANCODE_LEFT))
+		{
+			locomotive->moving = true;
+			locomotive->SetMoveDirection(Vector2(-1, 0));
+		}
 	}
-	else if (inputManager->KeyDown(SDL_SCANCODE_RIGHT))
+	else
 	{
-		locomotive->moving = true;
-		locomotive->SetMoveDirection(Vector2(1, 0));
-	}
-	else if (inputManager->KeyDown(SDL_SCANCODE_LEFT))
-	{
-		locomotive->moving = true;
-		locomotive->SetMoveDirection(Vector2(-1, 0));
+		if (inputManager->KeyDown(SDL_SCANCODE_RETURN))
+		{
+			if (locomotive == NULL && !loadNewLevel)	//start of the game, user pushed enter to start playing
+			{
+				loadNewLevel = true;
+			}
+			else if (explode)	//exploded, restart actual level
+			{
+				SCORE = 0;
+				explode = false;
+				LoadNewLevel(levelManager->actualLevel);
+			}
+			else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount()) //won the game, restart the whole game
+			{
+				SCORE = 0;
+				levelSuccess = false;
+				levelManager->actualLevel = 1;
+				LoadNewLevel(1);
+			}
+			else   //successfully finished level, load next level
+			{
+				SCORE = 0;
+				levelSuccess = false;
+				loadNewLevel = true;
+			}
+		}
 	}
 }
 
@@ -181,7 +219,9 @@ void GameManager::Update()
 	}
 	for (auto&& x : trainWagons)
 		x->Update();
+	explode = UpdateFire();
 	UpdateGate();
+	levelSuccess = CheckLevelSuccess();
 }
 
 void GameManager::UpdateScore()
@@ -216,12 +256,28 @@ void GameManager::UpdateGate()
 		{
 			pos++;
 			if (x->GetName() == "gate")
+			{
+				Vector2 v = (*(items.begin() + pos))->GetPosition();	// get gate's position
+				items.erase(items.begin() + pos);	//delete gate from items ...
+				add(std::make_unique<NonCollectibleItem>(v.x, v.y, "open_gate"));	//... and replace it by open gate
 				break;
+			}
 		}
-		Vector2 v = (*(items.begin() + pos))->GetPosition();	// get gate's position
-		items.erase(items.begin() + pos);	//delete gate from items ...
-		add(std::make_unique<NonCollectibleItem>(v.x,v.y, "open_gate"));	//... and replace it by open gate
 	}
+}
+
+bool GameManager::CheckLevelSuccess()
+{
+	/*
+	i know that when gate is open, it is added as the last item,
+	because i am adding to "items" only when loading level, and then once more when adding "open_gate"
+	*/
+	if (items.back()->GetName() == "open_gate")	//if true -> gate is opened
+	{
+		if (items.back()->GetPosition() == locomotive->GetPosition())	//if true -> locomotive has successfully reached final destination with all items picked up
+			return true;
+	}
+	return false;
 }
 
 void GameManager::CheckCollision()
@@ -297,6 +353,20 @@ void GameManager::Render()
 	locomotive->Render();
 	for (auto&& x : trainWagons)
 		x->Render();
+	graphicsManager->Render("Score : " + std::to_string(SCORE), 
+		levelManager->GetLevelHeight(levelManager->actualLevel) * graphicsManager->SetPictureSize() + graphicsManager->GetHeightOffset());
+}
+
+void GameManager::RenderSpecialScreen()
+{
+	if (explode)
+		graphicsManager->RenderSpecialScreen("ExplodeScreen");
+	else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount())
+		graphicsManager->RenderSpecialScreen("WinScreen");
+	else if (locomotive == NULL)
+		graphicsManager->RenderSpecialScreen("StartScreen");
+	else if (levelSuccess)
+		graphicsManager->RenderSpecialScreen("LevelScreen");
 }
 
 void GameManager::GameLoop()
@@ -319,16 +389,15 @@ void GameManager::GameLoop()
 		if (timer->GetDelta() >= 1.0f / FRAME_RATE)
 		{
 			SDL_RenderClear(graphicsManager->GetRenderer());
-			if (locomotive != NULL && locomotive->moving)
+			if (locomotive != NULL && locomotive->moving && !explode && !levelSuccess)
 			{
 				Update();
 				CheckCollision();
-				if (explode || UpdateFire())
-					quit = true;
 				UpdateScore();
 			}
-			graphicsManager->Render("Score : " + std::to_string(SCORE), levelManager->GetLevelHeight(levelManager->actualLevel) * 50);
-			Render();
+			if(locomotive != NULL)	//render only if there is no start screen
+				Render();
+			RenderSpecialScreen();
 			SDL_RenderPresent(graphicsManager->GetRenderer());
 			printf("basket size : %d\n", basket.size());
 			timer->Reset();

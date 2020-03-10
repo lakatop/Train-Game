@@ -2,18 +2,18 @@
 
 NonCollectibleItem::NonCollectibleItem(int x, int y, std::string name_, bool brick_, Vector2 dir) : Item(x, y, name_, brick_)
 {
-	IMAGE_SIZE = 50;
 	pos.x = x;
 	pos.y = y;
 	name = name_;
 	brick = brick_;
 	direction = dir;
-	drawPosition.x = x * IMAGE_SIZE;
-	drawPosition.y = y * IMAGE_SIZE;
+	graphics = GraphicsManager::Instance();
+	IMAGE_SIZE = graphics->SetPictureSize();
+	drawPosition.x = x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = y * IMAGE_SIZE + graphics->GetHeightOffset();
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
-	graphics = GraphicsManager::Instance();
-	texture = SetTexture(SDL_GetBasePath(), name);
+	texture = graphics->SetTexture(SDL_GetBasePath(), name);
 }
 
 NonCollectibleItem::~NonCollectibleItem()
@@ -31,11 +31,6 @@ void NonCollectibleItem::SetPosition(int x, int y)
 {
 	pos.x = x;
 	pos.y = y;
-}
-
-SDL_Texture* NonCollectibleItem::SetTexture(std::string path, std::string name)
-{
-	return Item::SetTexture(path, name);
 }
 
 bool NonCollectibleItem::Collectible()

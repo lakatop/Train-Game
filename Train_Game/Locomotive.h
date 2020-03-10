@@ -23,7 +23,7 @@ public:
 private:
 	void SetPosition(int x, int y);
 	SDL_Texture* SetTexture(std::string path);
-	void UpdatePosition();
+	//void UpdatePosition();
 	Locomotive(int x, int y);
 	~Locomotive();
 

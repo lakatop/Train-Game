@@ -31,11 +31,14 @@ private:
 	bool UpdateFire();
 	void UpdateGate();
 	void CheckCollision();
+	bool CheckLevelSuccess();
+	void RenderSpecialScreen();
 
 	void InitializeScoreBoard();
 
 	bool quit;
 	bool explode;
+	bool levelSuccess;
 	bool loadNewLevel;
 	float FRAME_RATE;
 	int SCORE;

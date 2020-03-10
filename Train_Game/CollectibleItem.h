@@ -21,7 +21,6 @@ public:
 	bool taken;
 private:
 	void SetPosition(int x, int y) override;
-	SDL_Texture* SetTexture(std::string path, std::string name) override;
 
 	int IMAGE_SIZE;
 	std::string name;

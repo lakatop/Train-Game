@@ -10,9 +10,7 @@ public:
 	Item();
 	virtual ~Item();
 	Vector2& GetPosition() override;
-	SDL_Texture* SetTexture(std::string path) override;
 	virtual std::string& GetName() = 0;
-	virtual SDL_Texture* SetTexture(std::string path, std::string name);
 	virtual Vector2& GetPreviousPosition() = 0;
 	virtual void Render() = 0;
 	virtual Vector2& GetDirection() = 0;

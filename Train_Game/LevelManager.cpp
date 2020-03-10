@@ -61,7 +61,7 @@ void LevelManager::LoadLevels()
 	std::ifstream f;
 	for (int i = 1; i <= levelCount; i++)
 	{
-		std::string mapName = path.append("/map") + std::to_string(i) + ".txt";
+		std::string mapName = path + "/map" + std::to_string(i) + ".txt";
 		f.open(mapName);
 		if (!f.good())
 		{
