@@ -1,10 +1,14 @@
+/*
+Peter Lakatos
+Component.h
+Train_Game
+*/
 #ifndef _COMPONENT_H
 #define _COMPONENT_H
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <string>
-#include "GraphicsManager.h"
 
 struct Vector2
 {
@@ -43,8 +47,9 @@ public:
 	virtual std::string& GetName() = 0;
 	virtual bool GetFire() = 0;
 	virtual void SetFire() = 0;
+
 private:
-	virtual void SetPosition(int x, int y) = 0;
+	virtual void SetPosition(const int x, const int y) = 0;
 };
 
 #endif

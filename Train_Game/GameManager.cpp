@@ -18,6 +18,7 @@ GameManager::GameManager()
 	explode = false;
 	loadNewLevel = false;
 	levelSuccess = false;
+	renderExplosion = false;
 	InitializeScoreBoard();
 	quit = !(graphicsManager->ReturnSucces());
 	timer = Timer::Instance();
@@ -54,7 +55,7 @@ void GameManager::InitializeScoreBoard()
 	scoreBoard.insert(std::make_pair("final", 5000));
 }
 
-void GameManager::LoadNewLevel(int levelNumber)
+void GameManager::LoadNewLevel(const int levelNumber)
 {
 	items.erase(items.begin(), items.end());	//clear previous components
 	trainWagons.erase(trainWagons.begin(),trainWagons.end());
@@ -84,7 +85,7 @@ void GameManager::add(std::unique_ptr<Item> c)
 	items.push_back(move(c));
 }
 
-void GameManager::CreateComponent(char c, int x, int y)
+void GameManager::CreateComponent(const char c, const int x, const int y)
 {
 	if (c == 'R') //locomotive
 	{
@@ -348,13 +349,25 @@ void GameManager::CheckCollision()
 
 void GameManager::Render()
 {
+	if (renderExplosion)	//in case that train(locomotive) exploded, set it to position where it was before an explosion
+	{
+		for (auto&& x : trainWagons)
+			x->SetToPreviousPosition();
+		locomotive->SetToPreviousPosition();
+	}
 	for (auto&& x : items)
 		x->Render();
-	locomotive->Render();
+	if(!explode)	
+		locomotive->Render();
 	for (auto&& x : trainWagons)
 		x->Render();
 	graphicsManager->Render("Score : " + std::to_string(SCORE), 
 		levelManager->GetLevelHeight(levelManager->actualLevel) * graphicsManager->SetPictureSize() + graphicsManager->GetHeightOffset());
+	if (renderExplosion)
+	{
+		graphicsManager->RenderExplosion(locomotive->GetPosition());
+		renderExplosion = false;
+	}
 }
 
 void GameManager::RenderSpecialScreen()
@@ -394,6 +407,7 @@ void GameManager::GameLoop()
 				Update();
 				CheckCollision();
 				UpdateScore();
+				renderExplosion = (explode && !renderExplosion) ? true : false;		//if it just exploded, render explosion
 			}
 			if(locomotive != NULL)	//render only if there is no start screen
 				Render();

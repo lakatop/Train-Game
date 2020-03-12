@@ -1,3 +1,8 @@
+/*
+Peter Lakatos
+CollectibleItem.h
+Train_Game
+*/
 #ifndef _COLLECTIBLEITEM_H
 #define _COLLECTIBLEITEM_H
 
@@ -19,8 +24,9 @@ public:
 	void SetFire() {}
 
 	bool taken;
+
 private:
-	void SetPosition(int x, int y) override;
+	void SetPosition(const int x, const int y) override;
 
 	int IMAGE_SIZE;
 	std::string name;

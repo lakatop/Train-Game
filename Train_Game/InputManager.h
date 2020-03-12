@@ -1,3 +1,8 @@
+/*
+Peter Lakatos
+InputManager.h
+Train_Game
+*/
 #ifndef _INPUTMANAGER_H
 #define _INPUTMANAGER_H
 
@@ -10,6 +15,7 @@ public:
 	void Clear();
 	bool KeyDown(SDL_Scancode scanCode);
 	void Update();
+
 private:
 	InputManager();
 	~InputManager();

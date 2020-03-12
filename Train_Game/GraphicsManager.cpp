@@ -82,10 +82,10 @@ bool GraphicsManager::Init()
 	return true;
 }
 
-SDL_Texture* GraphicsManager::SetTexture(std::string path, std::string name)
+SDL_Texture* GraphicsManager::SetTexture(const std::string path, const std::string name)
 {
 	SDL_Texture* tex = NULL;
-	std::string fullPath = path.append("Art/") + name + ".png";
+	std::string fullPath = path + "Art/" + name + ".png";
 	SDL_Surface* surface = IMG_Load(fullPath.c_str());
 	if (surface == NULL)
 	{
@@ -133,7 +133,7 @@ int GraphicsManager::GetWidthOffSet()
 	return (screenWidth - levelWidth) / 2;
 }
 
-double GraphicsManager::GetFlipAngle(int x, int y)
+double GraphicsManager::GetFlipAngle(const int x, const int y)
 {
 	if (x == -1 && y == 0)	//left direction : just flip horizontally
 		flip = SDL_FLIP_HORIZONTAL;
@@ -154,7 +154,7 @@ void GraphicsManager::SetFlipAngleArray()
 	flipArray[1][0] = -90;
 }
 
-SDL_Texture* GraphicsManager::GetText(std::string path)
+SDL_Texture* GraphicsManager::GetText(const std::string path)
 {
 	if (text.find(path) == text.end())
 		text.insert(std::make_pair(path, CreateText(path)));
@@ -164,7 +164,7 @@ SDL_Texture* GraphicsManager::GetText(std::string path)
 	return text.find(path)->second;
 }
 
-SDL_Texture* GraphicsManager::CreateText(std::string text)
+SDL_Texture* GraphicsManager::CreateText(const std::string text)
 {
 	std::string fullPath = SDL_GetBasePath();
 	fullPath.append("/Art/Retro Gaming.ttf");
@@ -190,7 +190,7 @@ SDL_Texture* GraphicsManager::CreateText(std::string text)
 	return tex;
 }
 
-void GraphicsManager::Render(std::string path, int height)
+void GraphicsManager::Render(const std::string path, const int height)
 {
 	//render SCORE
 	renderRect.y = height + FONT_SIZE;
@@ -205,6 +205,40 @@ void GraphicsManager::RenderSpecialScreen(std::string name)
 	rect.x = 0;
 	rect.y = 0;
 	SDL_RenderCopy(renderer, tex, NULL, &rect);
+	SDL_DestroyTexture(tex);
+}
+
+void GraphicsManager::RenderExplosion(const Vector2& pos)
+{
+	Uint8 r, g, b, a;
+	SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);		//get background color
+	
+	SDL_Rect rect;	//set rect that represents drawing position for the explosion
+	int IMAGE_SIZE = SetPictureSize();
+	rect.x = pos.x * IMAGE_SIZE + GetWidthOffSet();
+	rect.y = pos.y * IMAGE_SIZE + GetHeightOffset();
+	rect.w = IMAGE_SIZE;
+	rect.h = IMAGE_SIZE;
+
+	SDL_Texture* backTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 1024, 768);	//create a texture that represents background
+	if (backTexture == NULL)
+	{
+		printf("Error reating background texture : %s", SDL_GetError());
+		exit(0);
+	}
+	SDL_SetTextureColorMod(backTexture, r, g, b);
+
+	for (int i = 1; i <= 3; i++)
+	{
+		SDL_Texture* tex = SetTexture(SDL_GetBasePath(), "Explosion" + std::to_string(i));	//draw explosion
+		SDL_RenderCopy(renderer, tex, NULL, &rect);
+		SDL_RenderPresent(renderer);
+		SDL_DestroyTexture(tex);
+		SDL_Delay(100);
+		SDL_RenderCopy(renderer, backTexture, NULL, &rect);	//...then wait 100ms and overlay it with background
+		SDL_RenderPresent(renderer);
+	}
+	SDL_DestroyTexture(backTexture);
 }
 
 SDL_Renderer* GraphicsManager::GetRenderer()

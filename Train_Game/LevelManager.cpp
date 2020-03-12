@@ -32,17 +32,17 @@ int LevelManager::GetLevelCount()
 	return levelCount;
 }
 
-int LevelManager::GetLevelWidth(int levelNumber)
+int LevelManager::GetLevelWidth(const int levelNumber)
 {
 	return levels[levelNumber - 1]->GetWidth();
 }
 
-int LevelManager::GetLevelHeight(int levelNumber)
+int LevelManager::GetLevelHeight(const int levelNumber)
 {
 	return levels[levelNumber - 1]->GetHeight();
 }
 
-char LevelManager::GetLevelChar(int x, int y, int levelNumber)
+char LevelManager::GetLevelChar(const int x, const int y, const int levelNumber)
 {
 	return levels[levelNumber - 1]->GetChar(levels[levelNumber - 1]->index(x, y));
 }

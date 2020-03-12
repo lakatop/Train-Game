@@ -2,7 +2,7 @@
 
 Locomotive* Locomotive::instance = NULL;
 
-Locomotive* Locomotive::Instance(int x, int y)
+Locomotive* Locomotive::Instance(const int x, const int y)
 {
 	if (instance == NULL)
 		instance = new Locomotive(x, y);
@@ -16,8 +16,7 @@ Vector2& Locomotive::GetDirection()
 
 Locomotive::Locomotive(int x, int y)
 {
-	pos.x = x;
-	pos.y = y;
+	SetPosition(x, y);
 	previousPos.x = x;
 	previousPos.y = y;
 	moving = false;
@@ -88,30 +87,17 @@ Vector2& Locomotive::GetPosition()
 	return pos;
 }
 
-void Locomotive::SetPosition(int x, int y)
+void Locomotive::SetPosition(const int x, const int y)
 {
 	pos.x = x;
 	pos.y = y;
 }
 
-SDL_Texture* Locomotive::SetTexture(std::string path)
+void Locomotive::SetToPreviousPosition()
 {
-	SDL_Texture* tex = NULL;
-	std::string fullPath = path.append("Art/locomotive.png");
-	SDL_Surface* surface = IMG_Load(fullPath.c_str());
-	if (surface == NULL)
-	{
-		printf("Error loading image : %s\n", IMG_GetError());
-		exit(0);
-	}
-	tex = SDL_CreateTextureFromSurface(graphics->GetRenderer(), surface);
-	if (tex == NULL)
-	{
-		printf("Error creating texture : %s\n", SDL_GetError());
-		exit(0);
-	}
-	SDL_FreeSurface(surface);
-	return tex;
+	pos = previousPos;
+	drawPosition.x = pos.x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = pos.y * IMAGE_SIZE + graphics->GetHeightOffset();
 }
 
 void Locomotive::Render()

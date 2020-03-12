@@ -1,5 +1,11 @@
+/*
+Peter Lakatos
+GraphicsManager.h
+Train_Game
+*/
 #ifndef _GRAPHICSMANAGER_H
 #define _GRAPHICSMANAGER_H
+
 #include<SDL.h>
 #include <stdio.h>
 #include <SDL_image.h>
@@ -13,15 +19,16 @@ class GraphicsManager
 public:
 	static GraphicsManager* Instance();
 	bool ReturnSucces();
-	void Render(std::string path, int height);
+	void Render(const std::string path, const int height);
 	void Clear();
-	void RenderSpecialScreen(std::string name);
+	void RenderSpecialScreen(const std::string name);
+	void RenderExplosion(const Vector2& pos);
 	int SetPictureSize();
 	int GetWidthOffSet();
 	int GetHeightOffset();
 	SDL_Renderer* GetRenderer();
-	SDL_Texture* SetTexture(std::string path, std::string name);
-	double GetFlipAngle(int x, int y);
+	SDL_Texture* SetTexture(const std::string path, const std::string name);
+	double GetFlipAngle(const int x, const int y);
 
 	SDL_Window* window;
 	SDL_Surface* back_buffer;

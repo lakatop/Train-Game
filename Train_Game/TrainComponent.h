@@ -1,12 +1,18 @@
+/*
+Peter Lakatos
+TrainComponent.h
+Train_Game
+*/
 #ifndef _TRAINCOMPONENT_H
 #define _TRAINCOMPONENT_H
 
 #include "Component.h"
+#include "GraphicsManager.h"
 
 class TrainComponent : public Component
 {
 public:
-	TrainComponent(int x, int y, std::string name_, Vector2 move_, bool last_ = false, Component* par = NULL);
+	TrainComponent(int x, int y, std::string& name_, Vector2& move_, bool last_ = false, Component* par = NULL);
 	Vector2& GetPosition() override;
 	std::string& GetName() override;
 	bool GetFire() override;
@@ -22,11 +28,13 @@ public:
 	Vector2& GetPreviousMoveDirection();
 	void SetMoveDirection();
 	void SetPreviousMoveDirection();
+	void SetToPreviousPosition();
 	Component* GetPointer();
 
 	Component* parent;
+
 private:
-	void SetPosition(int x, int y) override;
+	void SetPosition(const int x, const int y) override;
 
 	bool last;
 	bool fire;

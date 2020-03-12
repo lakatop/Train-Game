@@ -1,3 +1,8 @@
+/*
+Peter Lakatos
+NonCollectibleItem.h
+Train_Game
+*/
 #ifndef _NONCOLLECTIBLEITEM_H
 #define _NONCOLLECTIBLEITEM_H
 
@@ -19,8 +24,9 @@ public:
 	void SetFire() {}
 
 	bool brick;
+
 private:
-	void SetPosition(int x, int y) override;
+	void SetPosition(const int x, const int y) override;
 
 	int IMAGE_SIZE;
 	std::string name;

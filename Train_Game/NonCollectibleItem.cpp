@@ -2,8 +2,7 @@
 
 NonCollectibleItem::NonCollectibleItem(int x, int y, std::string name_, bool brick_, Vector2 dir) : Item(x, y, name_, brick_)
 {
-	pos.x = x;
-	pos.y = y;
+	SetPosition(x, y);
 	name = name_;
 	brick = brick_;
 	direction = dir;
@@ -27,7 +26,7 @@ Vector2& NonCollectibleItem::GetPosition()
 	return Item::GetPosition();
 }
 
-void NonCollectibleItem::SetPosition(int x, int y)
+void NonCollectibleItem::SetPosition(const int x, const int y)
 {
 	pos.x = x;
 	pos.y = y;

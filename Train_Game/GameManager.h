@@ -1,5 +1,11 @@
+/*
+Peter Lakatos
+GameManager.h
+Train_Game
+*/
 #ifndef _GAMEMANAGER_H
 #define _GAMEMANAGER_H
+
 #include "Timer.h"
 #include "LevelManager.h"
 #include "TrainComponent.h"
@@ -19,10 +25,11 @@ public:
 	void GameLoop();
 	~GameManager();
 	void Clear();
+
 private:
 	GameManager();
-	void LoadNewLevel(int levelNumber);
-	void CreateComponent(char c, int x, int y);
+	void LoadNewLevel(const int levelNumber);
+	void CreateComponent(const char c, const int x, const int y);
 	void add(std::unique_ptr<Item>);
 	void Render();
 	void SetInput();
@@ -40,6 +47,7 @@ private:
 	bool explode;
 	bool levelSuccess;
 	bool loadNewLevel;
+	bool renderExplosion;
 	float FRAME_RATE;
 	int SCORE;
 	static GameManager* instance;

@@ -2,8 +2,7 @@
 
 CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, name_)
 {
-	pos.x = x;
-	pos.y = y;
+	SetPosition(x, y);
 	name = name_;
 	taken = false;
 	graphics = GraphicsManager::Instance();
@@ -36,7 +35,7 @@ Vector2& CollectibleItem::GetPreviousPosition()
 	return pos;
 }
 
-void CollectibleItem::SetPosition(int x, int y)
+void CollectibleItem::SetPosition(const int x, const int y)
 {
 	pos.x = x;
 	pos.y = y;

@@ -1,12 +1,18 @@
+/*
+Peter Lakatos
+Locomotive.h
+Train_Game
+*/
 #ifndef _LOCOMOTIVE_H
 #define _LOCOMOTIVE_H
 
 #include "Component.h"
+#include "GraphicsManager.h"
 
 class Locomotive : public Component
 {
 public:
-	static Locomotive* Instance(int x, int y);
+	static Locomotive* Instance(const int x, const int y);
 	Vector2& GetPosition() override;
 	void Render() override;
 	void SetMoveDirection(const Vector2& m);
@@ -16,14 +22,14 @@ public:
 	std::string& GetName() override;
 	bool GetFire() override;
 	void SetFire() override;
+	void SetToPreviousPosition();
 	void Clear();
 
 	bool moving;
 	Component* parent;
+
 private:
-	void SetPosition(int x, int y);
-	SDL_Texture* SetTexture(std::string path);
-	//void UpdatePosition();
+	void SetPosition(const int x, const int y);
 	Locomotive(int x, int y);
 	~Locomotive();
 

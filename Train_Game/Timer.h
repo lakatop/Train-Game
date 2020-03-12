@@ -1,3 +1,8 @@
+/*
+Peter Lakatos
+Timer.h
+Train_Game
+*/
 #ifndef _TIMER_H
 #define _TIMER_H
 
@@ -12,6 +17,7 @@ public:
 	void Clear();
 
 	static Timer* Instance();
+
 private:
 	Timer();
 	~Timer();

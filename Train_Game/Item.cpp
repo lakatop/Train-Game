@@ -7,10 +7,9 @@ Item::Item()
 	brick = true;
 }
 
-Item::Item(int x, int y, std::string name_, bool brick_)
+Item::Item(int x, int y, std::string& name_, bool brick_)
 {
-	pos.x = x;
-	pos.y = y;
+	SetPosition(x, y);
 	name = name_;
 	brick = brick_;
 }

@@ -1,9 +1,8 @@
 #include "TrainComponent.h"
 
-TrainComponent::TrainComponent(int x, int y, std::string name_, Vector2 move_, bool last_, Component* par)
+TrainComponent::TrainComponent(int x, int y, std::string& name_, Vector2& move_, bool last_, Component* par)
 {
-	pos.x = x;
-	pos.y = y;
+	SetPosition(x, y);
 	previousPos.x = x;
 	previousPos.y = y;
 	last = last_;
@@ -36,7 +35,7 @@ Vector2& TrainComponent::GetPosition()
 	return pos;
 }
 
-void TrainComponent::SetPosition(int x, int y)
+void TrainComponent::SetPosition(const int x, const int y)
 {
 	pos.x = x;
 	pos.y = y;
@@ -77,6 +76,13 @@ void TrainComponent::CheckFireCollision()
 	{
 		this->fire = true;
 	}
+}
+
+void TrainComponent::SetToPreviousPosition()
+{
+	pos = previousPos;
+	drawPosition.x = pos.x * IMAGE_SIZE + graphics->GetWidthOffSet();
+	drawPosition.y = pos.y * IMAGE_SIZE + graphics->GetHeightOffset();
 }
 
 std::string& TrainComponent::GetName()
