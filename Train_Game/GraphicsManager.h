@@ -10,6 +10,7 @@ Train_Game
 #include <stdio.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include <map>
 #include <string>
 #include "LevelManager.h"

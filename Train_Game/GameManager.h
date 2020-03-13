@@ -12,6 +12,7 @@ Train_Game
 #include "CollectibleItem.h"
 #include "NonCollectibleItem.h"
 #include "InputManager.h"
+#include "AudioManager.h"
 #include "Locomotive.h"
 #include <map>
 #include <set>
@@ -39,6 +40,7 @@ private:
 	void UpdateGate();
 	void CheckCollision();
 	bool CheckLevelSuccess();
+	void PlayMusic();
 	void RenderSpecialScreen();
 
 	void InitializeScoreBoard();
@@ -48,6 +50,7 @@ private:
 	bool levelSuccess;
 	bool loadNewLevel;
 	bool renderExplosion;
+	bool musicPlaying;
 	float FRAME_RATE;
 	int SCORE;
 	static GameManager* instance;
@@ -56,6 +59,7 @@ private:
 	Timer* timer;
 	LevelManager* levelManager;
 	InputManager* inputManager;
+	AudioManager* audioManager;
 	Locomotive* locomotive;
 	std::vector<std::unique_ptr<Item>> items;
 	std::vector<std::unique_ptr<TrainComponent>> trainWagons;

@@ -39,6 +39,7 @@ void GraphicsManager::Clear()
 	SDL_DestroyWindow(window);
 	window = NULL;
 
+	Mix_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -50,7 +51,7 @@ void GraphicsManager::Clear()
 
 bool GraphicsManager::Init()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("SDL initialization error : %s", SDL_GetError());
 		return false;

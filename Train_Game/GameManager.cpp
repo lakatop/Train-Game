@@ -19,11 +19,13 @@ GameManager::GameManager()
 	loadNewLevel = false;
 	levelSuccess = false;
 	renderExplosion = false;
+	musicPlaying = false;
 	InitializeScoreBoard();
 	quit = !(graphicsManager->ReturnSucces());
 	timer = Timer::Instance();
 	levelManager = LevelManager::Instance();
 	inputManager = InputManager::Instance();
+	audioManager = AudioManager::Instance();
 	locomotive = NULL;
 }
 
@@ -34,13 +36,16 @@ GameManager::~GameManager()
 void GameManager::Clear()
 {
 	timer->Clear();
+	audioManager->Clear();
 	graphicsManager->Clear();
 	levelManager->Clear();
 	inputManager->Clear();
 	locomotive->Clear();
+	
 	items.erase(items.begin(), items.end());
 	trainWagons.erase(trainWagons.begin(), trainWagons.end());
 	basket.erase(basket.begin(), basket.end());
+	
 	delete instance;
 	instance = NULL;
 }
@@ -57,6 +62,8 @@ void GameManager::InitializeScoreBoard()
 
 void GameManager::LoadNewLevel(const int levelNumber)
 {
+	audioManager->StopMusic();
+	musicPlaying = false;
 	items.erase(items.begin(), items.end());	//clear previous components
 	trainWagons.erase(trainWagons.begin(),trainWagons.end());
 	basket.erase(basket.begin(), basket.end());
@@ -347,6 +354,15 @@ void GameManager::CheckCollision()
 	}
 }
 
+void GameManager::PlayMusic()
+{
+	if (!musicPlaying)
+	{
+		audioManager->PlayMusic("win");
+		musicPlaying = true;
+	}
+}
+
 void GameManager::Render()
 {
 	if (renderExplosion)	//in case that train(locomotive) exploded, set it to position where it was before an explosion
@@ -357,7 +373,7 @@ void GameManager::Render()
 	}
 	for (auto&& x : items)
 		x->Render();
-	if(!explode)	
+	if (!explode)
 		locomotive->Render();
 	for (auto&& x : trainWagons)
 		x->Render();
@@ -365,6 +381,7 @@ void GameManager::Render()
 		levelManager->GetLevelHeight(levelManager->actualLevel) * graphicsManager->SetPictureSize() + graphicsManager->GetHeightOffset());
 	if (renderExplosion)
 	{
+		audioManager->PlayEffect("explode");
 		graphicsManager->RenderExplosion(locomotive->GetPosition());
 		renderExplosion = false;
 	}
@@ -375,11 +392,20 @@ void GameManager::RenderSpecialScreen()
 	if (explode)
 		graphicsManager->RenderSpecialScreen("ExplodeScreen");
 	else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount())
+	{
+		PlayMusic();
 		graphicsManager->RenderSpecialScreen("WinScreen");
+	}
 	else if (locomotive == NULL)
+	{
+		PlayMusic();
 		graphicsManager->RenderSpecialScreen("StartScreen");
+	}
 	else if (levelSuccess)
+	{
+		PlayMusic();
 		graphicsManager->RenderSpecialScreen("LevelScreen");
+	}
 }
 
 void GameManager::GameLoop()
@@ -404,6 +430,7 @@ void GameManager::GameLoop()
 			SDL_RenderClear(graphicsManager->GetRenderer());
 			if (locomotive != NULL && locomotive->moving && !explode && !levelSuccess)
 			{
+				audioManager->PlayEffect("move");
 				Update();
 				CheckCollision();
 				UpdateScore();
