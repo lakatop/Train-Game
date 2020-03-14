@@ -28,13 +28,16 @@ public:
 private:
 	void SetPosition(const int x, const int y) override;
 
+	GraphicsManager* graphics;
+
 	int IMAGE_SIZE;
 	std::string name;
+	
 	Vector2 pos;
 	Vector2 direction;
+	
 	SDL_Rect drawPosition;
 	SDL_Texture* texture;
-	GraphicsManager* graphics;
 };
 
 #endif

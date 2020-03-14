@@ -36,18 +36,21 @@ public:
 private:
 	void SetPosition(const int x, const int y) override;
 
+	GraphicsManager* graphics;
+
 	bool last;
 	bool fire;
 	int IMAGE_SIZE;
 	std::string name;
+	
 	Vector2 pos;
 	Vector2 previousPos;
 	Vector2 moveDirection;
 	Vector2 previousMoveDirection;
+	
 	SDL_Rect drawPosition; //every component will have its own rect, which will represent its position on screen and will be updated every frame
 	SDL_Texture* texture;
 	SDL_Texture* fireTex;
-	GraphicsManager* graphics;
 };
 
 #endif

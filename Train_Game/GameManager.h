@@ -42,9 +42,10 @@ private:
 	bool CheckLevelSuccess();
 	void PlayMusic();
 	void RenderSpecialScreen();
-
 	void InitializeScoreBoard();
-
+	
+	static GameManager* instance;
+	
 	bool quit;
 	bool explode;
 	bool levelSuccess;
@@ -53,14 +54,15 @@ private:
 	bool musicPlaying;
 	float FRAME_RATE;
 	int SCORE;
-	static GameManager* instance;
 	SDL_Event events;
+	
 	GraphicsManager* graphicsManager;
 	Timer* timer;
 	LevelManager* levelManager;
 	InputManager* inputManager;
 	AudioManager* audioManager;
 	Locomotive* locomotive;
+	
 	std::vector<std::unique_ptr<Item>> items;
 	std::vector<std::unique_ptr<TrainComponent>> trainWagons;
 	std::map<std::string, int> scoreBoard;

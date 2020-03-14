@@ -26,11 +26,13 @@ void InputManager::Clear()
 
 bool InputManager::KeyDown(SDL_Scancode scanCode)
 {
+	//returns 1 if concrete key has been pressed, otherwise returns 0
 	return keyboardStates[scanCode];
 }
 
 void InputManager::Update()
 {
+	//update pressed keys
 	keyboardStates = SDL_GetKeyboardState(NULL);
 }
 

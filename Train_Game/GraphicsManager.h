@@ -20,7 +20,7 @@ class GraphicsManager
 public:
 	static GraphicsManager* Instance();
 	bool ReturnSucces();
-	void Render(const std::string path, const int height);
+	void RenderScore(const std::string name, const int height);
 	void Clear();
 	void RenderSpecialScreen(const std::string name);
 	void RenderExplosion(const Vector2& pos);
@@ -28,7 +28,7 @@ public:
 	int GetWidthOffSet();
 	int GetHeightOffset();
 	SDL_Renderer* GetRenderer();
-	SDL_Texture* SetTexture(const std::string path, const std::string name);
+	SDL_Texture* SetTexture(const std::string& name);
 	double GetFlipAngle(const int x, const int y);
 
 	SDL_Window* window;
@@ -42,11 +42,15 @@ private:
 	~GraphicsManager();
 	bool Init();
 	void SetFlipAngleArray();
-	SDL_Texture* CreateText(std::string path);
-	SDL_Texture* GetText(std::string path);
+	SDL_Texture* CreateText(std::string name);
+	SDL_Texture* GetText(std::string name);
+	SDL_Texture* GetTexture(std::string name);
 
 	static GraphicsManager* instance;
+	
 	std::map<std::string, SDL_Texture*> text;
+	std::map<std::string, SDL_Texture*> textures;
+	
 	bool success_initialization;
 	double flipArray[3][3];
 	int FONT_SIZE;

@@ -20,9 +20,12 @@ Timer::~Timer()
 {
 }
 
+//update is called every while loop iteration(game loop iteration)
+//it is basically just increasing delta time, until Reset() is called
 void Timer::Update()
 {
 	currentTime = SDL_GetTicks();
+	//deltaTime represents seconds between current time and startTime
 	deltaTime = (currentTime - startTime) * 0.001f;
 }
 

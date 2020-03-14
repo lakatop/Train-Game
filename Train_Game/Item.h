@@ -12,10 +12,9 @@ Train_Game
 class Item : public Component
 {
 public:
-	Item(int x, int y, std::string& name_, bool brick_ = false);
-	Item();
-	virtual ~Item();
-	Vector2& GetPosition() override;
+	Item(int x, int y, std::string& name_, bool brick_ = false) : name(name_), brick(brick_), pos(x,y) {}
+	virtual ~Item() {}
+	virtual Vector2& GetPosition() = 0;
 	virtual std::string& GetName() = 0;
 	virtual Vector2& GetPreviousPosition() = 0;
 	virtual void Render() = 0;
@@ -28,12 +27,11 @@ public:
 	bool brick;
 
 private:
-	virtual void SetPosition(const int x, const int y) override;
+	virtual void SetPosition(const int x, const int y) = 0;
 
 	std::string name;
+	
 	Vector2 pos;
-	SDL_Texture* texture;
-	GraphicsManager* graphics;
 };
 
 #endif

@@ -12,6 +12,11 @@ GameManager* GameManager::Instance()
 GameManager::GameManager()
 {
 	graphicsManager = GraphicsManager::Instance();
+	timer = Timer::Instance();
+	levelManager = LevelManager::Instance();
+	inputManager = InputManager::Instance();
+	audioManager = AudioManager::Instance();
+	
 	events.type = SDL_QUIT;
 	FRAME_RATE = 2;
 	SCORE = 0;
@@ -22,10 +27,6 @@ GameManager::GameManager()
 	musicPlaying = false;
 	InitializeScoreBoard();
 	quit = !(graphicsManager->ReturnSucces());
-	timer = Timer::Instance();
-	levelManager = LevelManager::Instance();
-	inputManager = InputManager::Instance();
-	audioManager = AudioManager::Instance();
 	locomotive = NULL;
 }
 
@@ -52,6 +53,7 @@ void GameManager::Clear()
 
 void GameManager::InitializeScoreBoard()
 {
+	//set score to all components int the game
 	scoreBoard.insert(std::make_pair("lighter", 1000));
 	scoreBoard.insert(std::make_pair("cherry", 500));
 	scoreBoard.insert(std::make_pair("tree", 1000));
@@ -62,29 +64,45 @@ void GameManager::InitializeScoreBoard()
 
 void GameManager::LoadNewLevel(const int levelNumber)
 {
+	//stop the music that is playing from some load screen
 	audioManager->StopMusic();
 	musicPlaying = false;
-	items.erase(items.begin(), items.end());	//clear previous components
+
+	//clear previous components
+	items.erase(items.begin(), items.end());
 	trainWagons.erase(trainWagons.begin(),trainWagons.end());
 	basket.erase(basket.begin(), basket.end());
-	locomotive->Clear();
+	if(locomotive != NULL)
+		locomotive->Clear();
+
+	//get width and height of current level
 	int width = levelManager->GetLevelWidth(levelNumber);
 	int height = levelManager->GetLevelHeight(levelNumber);
+
 	for (int h = 0; h < height; h++)
 	{
 		for (int w = 0; w < width; w++)
 		{
-			char c = levelManager->GetLevelChar(h, w, levelNumber);
-			CreateComponent(c, w, h);
+			char c = levelManager->GetLevelChar(h, w, levelNumber);	//get current character...
+			CreateComponent(c, w, h);								//...and create component 
 		}
 	}
-	loadNewLevel = false;
-	for (auto&& x : items)	//fill up the basket with all collectible items
+
+	loadNewLevel = false;	//level is successfully loaded, no need to load new level now
+	
+	//fill up the basket with all collectible items
+	for (auto&& x : items)
 	{
 		if (x->Collectible())
 			basket.insert(x->GetName());
 	}
-	locomotive->GetDirection();
+
+	//check if there is locomotive
+	if (locomotive == NULL)
+	{
+		printf("Error : level without locomotive");
+		exit(0);
+	}
 }
 
 void GameManager::add(std::unique_ptr<Item> c)
@@ -97,7 +115,6 @@ void GameManager::CreateComponent(const char c, const int x, const int y)
 	if (c == 'R') //locomotive
 	{
 		locomotive = Locomotive::Instance(x,y);
-		explode = false;
 	}
 	else if (c == 'L') //lighter
 	{
@@ -119,7 +136,7 @@ void GameManager::CreateComponent(const char c, const int x, const int y)
 	{
 		add(std::make_unique<CollectibleItem>(x, y, "rotten_apple"));
 	}
-	else if (c == 'F')
+	else if (c == 'F')	//final item
 	{
 		add(std::make_unique<CollectibleItem>(x, y, "final"));
 	}
@@ -127,7 +144,7 @@ void GameManager::CreateComponent(const char c, const int x, const int y)
 	{
 		add(std::make_unique<NonCollectibleItem>(x, y, "brick", true));
 	}
-	else if (c == 'G')
+	else if (c == 'G')	//gate
 	{
 		add(std::make_unique<NonCollectibleItem>(x, y, "gate", true));
 	}
@@ -160,11 +177,14 @@ void GameManager::CreateComponent(const char c, const int x, const int y)
 
 void GameManager::SetInput()
 {
+	//if user pushed esc button -> quit game
 	if (inputManager->KeyDown(SDL_SCANCODE_ESCAPE))
 	{
 		quit = true;
 	}
-	if (!explode && !levelSuccess && locomotive != NULL)	//no exposion, no finished level, no start screen
+
+	//no explosion, no finished level, no start screen, locomotive started moving -> set its moving direction
+	if (!explode && !levelSuccess && locomotive != NULL)
 	{
 		if (inputManager->KeyDown(SDL_SCANCODE_UP))
 		{
@@ -188,27 +208,32 @@ void GameManager::SetInput()
 		}
 	}
 	else
-	{
+	{	//some special screen is being rendered
+		//if user pushed Enter button -> load some level
 		if (inputManager->KeyDown(SDL_SCANCODE_RETURN))
 		{
-			if (locomotive == NULL && !loadNewLevel)	//start of the game, user pushed enter to start playing
+			//start of the game, user pushed enter to start playing
+			if (locomotive == NULL && !loadNewLevel)
 			{
 				loadNewLevel = true;
 			}
-			else if (explode)	//exploded, restart actual level
+			//exploded, restart actual level
+			else if (explode)
 			{
 				SCORE = 0;
 				explode = false;
 				LoadNewLevel(levelManager->actualLevel);
 			}
-			else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount()) //won the game, restart the whole game
+			//won the game, restart the whole game
+			else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount())
 			{
 				SCORE = 0;
 				levelSuccess = false;
 				levelManager->actualLevel = 1;
 				LoadNewLevel(1);
 			}
-			else   //successfully finished level, load next level
+			//successfully finished level, load next level
+			else  
 			{
 				SCORE = 0;
 				levelSuccess = false;
@@ -220,15 +245,22 @@ void GameManager::SetInput()
 
 void GameManager::Update()
 {
+	//update position of a locomotive and train wagons
 	locomotive->Update();
 	for (auto it = trainWagons.rbegin(), itend = trainWagons.rend(); it != itend; it++)
 	{
-		(*it)->SetMoveDirection();
+		(*it)->SetMoveDirection();	//get move direction from parent
 	}
 	for (auto&& x : trainWagons)
 		x->Update();
+
+	//check if locomotive exploded because of fire
 	explode = UpdateFire();
+	
+	//check if player collected all collectible items -> open gate
 	UpdateGate();
+
+	//check if locomotive is standing on open gate
 	levelSuccess = CheckLevelSuccess();
 }
 
@@ -237,8 +269,8 @@ void GameManager::UpdateScore()
 	SCORE = 0;
 	for (auto&& x : trainWagons)
 	{
-		if (!x->GetFire())	// you can increase your score only if the wagon is not on fire, wagons on fire have 0 value
-			SCORE += scoreBoard.find(x->GetName())->second;		//else find specific value of an item this wagon is carrying and add it to the score
+		if (!x->GetFire())	// score can be increased only if the wagon is not on fire, wagons on fire have 0 value
+			SCORE += scoreBoard.find(x->GetName())->second;		//find specific value of an item this wagon is carrying and add it to the score
 	}
 }
 
@@ -252,7 +284,7 @@ bool GameManager::UpdateFire()
 			break;
 		}
 	}
-	return locomotive->GetFire();		//return if the locomotive is on fire
+	return locomotive->GetFire();		//return condition of locomotive
 }
 
 void GameManager::UpdateGate()
@@ -292,7 +324,9 @@ void GameManager::CheckCollision()
 {
 	Vector2 lPos = locomotive->GetPosition();
 	bool success = false;
-	for (auto&& x : trainWagons)	//collision between the locomotive and wagons
+
+	//collision between the locomotive and wagons
+	for (auto&& x : trainWagons)
 	{
 		Vector2 tPos = x->GetPosition();
 		if (tPos.x == lPos.x && tPos.y == lPos.y)
@@ -306,12 +340,14 @@ void GameManager::CheckCollision()
 	if (!success)
 	{
 		int it = -1;
-		for (auto&& x : items)	//collision between items and the locomotive
+
+		//collision between items and the locomotive
+		for (auto&& x : items)
 		{
 			it++;
 			if (x->Collectible() == false)	//either brick or space
 			{
-				if (x->brick && x->GetPosition() == locomotive->GetPosition() && x->GetDirection() != locomotive->GetDirection())
+				if (x->brick && x->GetPosition() == locomotive->GetPosition() && x->GetDirection() != locomotive->GetDirection())	//direction is being checked because of special bricks with arrow
 				{
 					explode = true;
 					break;
@@ -319,11 +355,11 @@ void GameManager::CheckCollision()
 			}
 			else  //collectible item, in case of collision attach wagon
 			{
-				if (trainWagons.empty() || (!trainWagons.empty() && !trainWagons.back()->GetLast())) //check if the last wagon isnt carrying "final" item, if yes, you cant pick any more items
+				if (trainWagons.empty() || (!trainWagons.empty() && !trainWagons.back()->GetLast())) //check if the last wagon isnt carrying "final" item, if yes, locomotive cant pick any more items
 				{
 					if (x->GetPosition() == locomotive->GetPosition())
 					{
-						bool last = (x->GetName() == "final") ? true : false;	//if this item represents "final" item, than set true, otherwise false
+						bool last = (x->GetName() == "final") ? true : false;	//if this item represents "final item", than set true, otherwise false
 						if (trainWagons.empty()) //first wagon, its parent = locomotive
 						{
 							Vector2 tPos = locomotive->GetPreviousPosition();
@@ -345,7 +381,8 @@ void GameManager::CheckCollision()
 		}
 	}
 
-	if (trainWagons.empty() == false)	//boundary case when locomotive turns itself against its wagons
+	//boundary case when locomotive turns itself against its wagons
+	if (trainWagons.empty() == false)
 	{
 		if (trainWagons[0]->GetPreviousPosition() == locomotive->GetPosition())
 		{
@@ -365,20 +402,31 @@ void GameManager::PlayMusic()
 
 void GameManager::Render()
 {
-	if (renderExplosion)	//in case that train(locomotive) exploded, set it to position where it was before an explosion
+	//in case that train(locomotive) exploded, set it to position where it was before an explosion because of correct rendering
+	if (renderExplosion)
 	{
 		for (auto&& x : trainWagons)
 			x->SetToPreviousPosition();
 		locomotive->SetToPreviousPosition();
 	}
+	
+	//render all items
 	for (auto&& x : items)
 		x->Render();
+	
+	//if locomotive didnt explode, render it
 	if (!explode)
 		locomotive->Render();
+	
+	//render all train wagons
 	for (auto&& x : trainWagons)
 		x->Render();
-	graphicsManager->Render("Score : " + std::to_string(SCORE), 
-		levelManager->GetLevelHeight(levelManager->actualLevel) * graphicsManager->SetPictureSize() + graphicsManager->GetHeightOffset());
+	
+	//render score
+	graphicsManager->RenderScore("Score : " + std::to_string(SCORE), 
+								levelManager->GetLevelHeight(levelManager->actualLevel) * graphicsManager->SetPictureSize() + graphicsManager->GetHeightOffset());
+	
+	//if locomotive exploded, and explosion wasn't rendered yet, render it
 	if (renderExplosion)
 	{
 		audioManager->PlayEffect("explode");
@@ -389,18 +437,22 @@ void GameManager::Render()
 
 void GameManager::RenderSpecialScreen()
 {
+	//render explode screen
 	if (explode)
 		graphicsManager->RenderSpecialScreen("ExplodeScreen");
+	//successfully finished level and current level = final level -> player won -> render win screen
 	else if (levelSuccess && levelManager->actualLevel == levelManager->GetLevelCount())
 	{
 		PlayMusic();
 		graphicsManager->RenderSpecialScreen("WinScreen");
 	}
+	//locomotive is NULL -> level wasn't loaded yet -> render start screen
 	else if (locomotive == NULL)
 	{
 		PlayMusic();
 		graphicsManager->RenderSpecialScreen("StartScreen");
 	}
+	//player sucessfully finished level, but it wasn't final level -> render finished level screen
 	else if (levelSuccess)
 	{
 		PlayMusic();
@@ -412,24 +464,37 @@ void GameManager::GameLoop()
 {
 	while (!quit)
 	{
+		//load new level
 		if (loadNewLevel)
 		{
 			levelManager->actualLevel++;
 			LoadNewLevel(levelManager->actualLevel);
 		}
+
+		//update timer
 		timer->Update();
+
+		//check if user didnt close window
 		while (SDL_PollEvent(&events) != 0)
 		{
 			if (events.type == SDL_QUIT)
 				quit = true;
 		}
+
+		//update users input
 		inputManager->Update();
 		SetInput();
+		
+		//handle other situations every 0.5 second
 		if (timer->GetDelta() >= 1.0f / FRAME_RATE)
 		{
+			//clear screen from previous rendering
 			SDL_RenderClear(graphicsManager->GetRenderer());
+
+			//no special screen, locomotive is moving and didn't explode yet
 			if (locomotive != NULL && locomotive->moving && !explode && !levelSuccess)
 			{
+				//play "move" sound effect
 				audioManager->PlayEffect("move");
 				Update();
 				CheckCollision();
@@ -440,7 +505,6 @@ void GameManager::GameLoop()
 				Render();
 			RenderSpecialScreen();
 			SDL_RenderPresent(graphicsManager->GetRenderer());
-			printf("basket size : %d\n", basket.size());
 			timer->Reset();
 		}
 	}

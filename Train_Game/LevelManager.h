@@ -15,7 +15,8 @@ Train_Game
 #include<filesystem>
 #include "Component.h"
 
-struct LevelMap	// representing 1 level (map of the level)
+// representing 1 level (map of the level)
+struct LevelMap
 {
 public:
 	LevelMap(size_t w, size_t h) : width(w), height(h), arr(std::make_unique<char[]>(width* h)) {}
@@ -64,7 +65,9 @@ private:
 	~LevelManager();
 
 	static LevelManager* instance;
+
 	std::vector<std::unique_ptr<LevelMap>> levels;	//vector that contains all levels
+
 	int levelCount;
 };
 

@@ -11,18 +11,17 @@ CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, n
 	drawPosition.y = y * IMAGE_SIZE + graphics->GetHeightOffset();
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
-	texture = graphics->SetTexture(SDL_GetBasePath(), name);
+	texture = graphics->SetTexture(name);
 }
 
 CollectibleItem::~CollectibleItem()
 {
-	SDL_DestroyTexture(texture);
 	texture = NULL;
 }
 
 Vector2& CollectibleItem::GetPosition()
 {
-	return Item::GetPosition();
+	return pos;
 }
 
 Vector2& CollectibleItem::GetDirection()
@@ -53,6 +52,8 @@ bool CollectibleItem::Collectible()
 
 void CollectibleItem::Render()
 {
+	//check if item isn't already taken
+	//if it is already taken, it now represents some train wagon, so it musn't be rendered
 	if(!taken)
 		SDL_RenderCopy(graphics->GetRenderer(), texture, NULL, &drawPosition);
 }

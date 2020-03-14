@@ -9,14 +9,12 @@ Locomotive* Locomotive::Instance(const int x, const int y)
 	return instance;
 }
 
-Vector2& Locomotive::GetDirection()
-{
-	return moveDirection;
-}
-
 Locomotive::Locomotive(int x, int y)
 {
+	graphics = GraphicsManager::Instance();
+	
 	SetPosition(x, y);
+	
 	previousPos.x = x;
 	previousPos.y = y;
 	moving = false;
@@ -25,13 +23,19 @@ Locomotive::Locomotive(int x, int y)
 	name = "locomotive";
 	moveDirection.x = 1;
 	moveDirection.y = 0;
-	graphics = GraphicsManager::Instance();
+	
 	IMAGE_SIZE = graphics->SetPictureSize();
 	drawPosition.x = x * IMAGE_SIZE + graphics->GetWidthOffSet();
 	drawPosition.y = y * IMAGE_SIZE + graphics->GetHeightOffset();
 	drawPosition.w = IMAGE_SIZE;
 	drawPosition.h = IMAGE_SIZE;
-	texture = graphics->SetTexture(SDL_GetBasePath(),name);
+	
+	texture = graphics->SetTexture(name);
+}
+
+Vector2& Locomotive::GetDirection()
+{
+	return moveDirection;
 }
 
 void Locomotive::Clear()
@@ -42,7 +46,6 @@ void Locomotive::Clear()
 
 Locomotive::~Locomotive()
 {
-	SDL_DestroyTexture(texture);
 	texture = NULL;
 }
 
@@ -102,7 +105,8 @@ void Locomotive::SetToPreviousPosition()
 
 void Locomotive::Render()
 {
-	double r = graphics->GetFlipAngle(moveDirection.x, moveDirection.y);
-	SDL_RenderCopyEx(graphics->GetRenderer(), texture, NULL, &drawPosition,
-		graphics->GetFlipAngle(moveDirection.x,moveDirection.y),NULL,graphics->flip);
+	//get flip angle
+	double flipAngle = graphics->GetFlipAngle(moveDirection.x, moveDirection.y);
+	//render locomotive
+	SDL_RenderCopyEx(graphics->GetRenderer(), texture, NULL, &drawPosition, flipAngle, NULL, graphics->flip);
 }

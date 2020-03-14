@@ -16,7 +16,7 @@ struct Vector2
 
 	int x;
 	int y;
-	Vector2& operator=(const Vector2& rhs) //not needed yet
+	Vector2& operator=(const Vector2& rhs)
 	{
 		this->x = rhs.x;
 		this->y = rhs.y;

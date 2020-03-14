@@ -33,16 +33,19 @@ private:
 	Locomotive(int x, int y);
 	~Locomotive();
 
+	GraphicsManager* graphics;
+
 	bool fire;
 	static Locomotive* instance;
 	int IMAGE_SIZE;
 	std::string name;
+	
 	Vector2 pos;
 	Vector2 previousPos;
 	Vector2 moveDirection;
+	
 	SDL_Rect drawPosition;
 	SDL_Texture* texture;
-	GraphicsManager* graphics;
 };
 
 #endif
