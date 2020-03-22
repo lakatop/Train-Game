@@ -18,6 +18,7 @@ GraphicsManager::GraphicsManager()
 	SCREEN_WIDTH = 1000;
 	SCREEN_HEIGT = 800;
 	FONT_SIZE = 20;
+	flip = SDL_FLIP_NONE;
 
 	SetFlipAngleArray();
 
@@ -31,20 +32,20 @@ GraphicsManager::~GraphicsManager()
 void GraphicsManager::Clear()
 {
 	//destroy all score texts
-	for (auto&& x : text)
-		if (x.second != NULL)
+	for (auto&& [name, text] : text)
+		if (text != NULL)
 		{
-			SDL_DestroyTexture(x.second);
-			x.second = NULL;
+			SDL_DestroyTexture(text);
+			text = NULL;
 		}
 	text.clear();
 
 	//destroy all item, locomotive, train wagon and screen textures
-	for(auto&& x : textures)
-		if (x.second != NULL)
+	for(auto&& [name, texture] : textures)
+		if (texture != NULL)
 		{
-			SDL_DestroyTexture(x.second);
-			x.second = NULL;
+			SDL_DestroyTexture(texture);
+			texture = NULL;
 		}
 	textures.clear();
 
@@ -66,7 +67,7 @@ void GraphicsManager::Clear()
 
 bool GraphicsManager::Init()
 {
-	//initialize video and audio
+	//initialize SDL library
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("SDL initialization error : %s", SDL_GetError());
@@ -114,7 +115,7 @@ SDL_Texture* GraphicsManager::SetTexture(const std::string& name)
 	auto it = textures.find(name);
 	if (it == textures.end())
 	{
-		textures.insert(std::make_pair(name, GetTexture(name)));
+		textures.insert({ name, GetTexture(name) });
 		if (textures[name] == NULL)	//check if it was created successfully
 		{
 			printf("Texture creating error : %s", SDL_GetError());
@@ -155,7 +156,7 @@ SDL_Texture* GraphicsManager::GetTexture(std::string name)
 	return tex;
 }
 
-bool GraphicsManager::ReturnSucces()
+bool GraphicsManager::ReturnSuccess()
 {
 	return success_initialization;
 }
@@ -232,7 +233,7 @@ SDL_Texture* GraphicsManager::GetText(const std::string name)
 	//if not, add it
 	if (it == text.end())
 	{
-		text.insert(std::make_pair(name, CreateText(name)));
+		text.insert({ name, CreateText(name) });
 		if (text[name] == NULL)	//check if it was created successfully
 			exit(0);
 	}

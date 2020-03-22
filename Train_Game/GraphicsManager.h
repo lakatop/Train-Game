@@ -19,7 +19,7 @@ class GraphicsManager
 {
 public:
 	static GraphicsManager* Instance();
-	bool ReturnSucces();
+	bool ReturnSuccess();
 	void RenderScore(const std::string name, const int height);
 	void Clear();
 	void RenderSpecialScreen(const std::string name);

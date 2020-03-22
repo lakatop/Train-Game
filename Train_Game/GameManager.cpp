@@ -17,7 +17,7 @@ GameManager::GameManager()
 	inputManager = InputManager::Instance();
 	audioManager = AudioManager::Instance();
 	
-	events.type = SDL_QUIT;
+	events.type = NULL;
 	FRAME_RATE = 2;
 	SCORE = 0;
 	explode = false;
@@ -26,7 +26,7 @@ GameManager::GameManager()
 	renderExplosion = false;
 	musicPlaying = false;
 	InitializeScoreBoard();
-	quit = !(graphicsManager->ReturnSucces());
+	quit = !(graphicsManager->ReturnSuccess());
 	locomotive = NULL;
 }
 
@@ -46,7 +46,8 @@ void GameManager::Clear()
 	items.erase(items.begin(), items.end());
 	trainWagons.erase(trainWagons.begin(), trainWagons.end());
 	basket.erase(basket.begin(), basket.end());
-	
+	scoreBoard.erase(scoreBoard.begin(), scoreBoard.end());
+
 	delete instance;
 	instance = NULL;
 }
@@ -54,12 +55,12 @@ void GameManager::Clear()
 void GameManager::InitializeScoreBoard()
 {
 	//set score to all components int the game
-	scoreBoard.insert(std::make_pair("lighter", 1000));
-	scoreBoard.insert(std::make_pair("cherry", 500));
-	scoreBoard.insert(std::make_pair("tree", 1000));
-	scoreBoard.insert(std::make_pair("wine", 750));
-	scoreBoard.insert(std::make_pair("rotten_apple", -1000));
-	scoreBoard.insert(std::make_pair("final", 5000));
+	scoreBoard.insert({ "lighter", 1000 });
+	scoreBoard.insert({ "cherry", 500 });
+	scoreBoard.insert({ "tree", 1000 });
+	scoreBoard.insert({ "wine", 750 });
+	scoreBoard.insert({ "rotten_apple", -1000 });
+	scoreBoard.insert({ "final", 5000 });
 }
 
 void GameManager::LoadNewLevel(const int levelNumber)
@@ -93,7 +94,7 @@ void GameManager::LoadNewLevel(const int levelNumber)
 	//fill up the basket with all collectible items
 	for (auto&& x : items)
 	{
-		if (x->Collectible())
+		if (x->Collectible() && x->GetName() != "rotten_apple")
 			basket.insert(x->GetName());
 	}
 
@@ -322,14 +323,12 @@ bool GameManager::CheckLevelSuccess()
 
 void GameManager::CheckCollision()
 {
-	Vector2 lPos = locomotive->GetPosition();
 	bool success = false;
 
 	//collision between the locomotive and wagons
 	for (auto&& x : trainWagons)
 	{
-		Vector2 tPos = x->GetPosition();
-		if (tPos.x == lPos.x && tPos.y == lPos.y)
+		if (x->GetPosition() == locomotive->GetPosition())
 		{
 			explode = true;
 			success = true;
@@ -363,8 +362,9 @@ void GameManager::CheckCollision()
 						if (trainWagons.empty()) //first wagon, its parent = locomotive
 						{
 							Vector2 tPos = locomotive->GetPreviousPosition();
-							trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(), locomotive->GetDirection(), last, locomotive));
-						}
+							trainWagons.emplace_back(std::make_unique<TrainComponent>(tPos.x, tPos.y, x->GetName(),
+								locomotive->GetDirection(), last, locomotive));
+						}		
 						else
 						{
 							Vector2 tPos = trainWagons.back()->GetPreviousPosition();
@@ -372,7 +372,8 @@ void GameManager::CheckCollision()
 								trainWagons.back()->GetPreviousMoveDirection(), last, trainWagons.back()->GetPointer()));	//calling GetPreviousMoveDirection for correct wagon drawing
 							trainWagons.back()->CheckFireCollision();	// check if there isnt collision between wood and lighter that would trigger fire
 						}
-						basket.erase(basket.lower_bound(x->GetName()));	//delete item that now represents wagon from basket...
+						if(x->GetName() != "rotten_apple")
+							basket.erase(basket.lower_bound(x->GetName()));	//delete item that now represents wagon from basket...
 						items.erase(items.begin() + it);	//... and also delete it from items
 						break;
 					}
@@ -503,8 +504,11 @@ void GameManager::GameLoop()
 			}
 			if(locomotive != NULL)	//render only if there is no start screen
 				Render();
+			
 			RenderSpecialScreen();
+			
 			SDL_RenderPresent(graphicsManager->GetRenderer());
+			
 			timer->Reset();
 		}
 	}

@@ -27,20 +27,22 @@ AudioManager::~AudioManager()
 void AudioManager::Clear()
 {
 	//free all sound effects
-	for (auto&& x : soundEffects)
-		if (x.second != NULL)
+	for (auto&& [name, effect] : soundEffects)
+		if (effect != NULL)
 		{
-			Mix_FreeChunk(x.second);
-			x.second = NULL;
+			Mix_FreeChunk(effect);
+			effect = NULL;
 		}
+	soundEffects.clear();
 
 	//free all music
-	for(auto&& x : soundMusic)
-		if (x.second != NULL)
+	for(auto&& [name, music] : soundMusic)
+		if (music != NULL)
 		{
-			Mix_FreeMusic(x.second);
-			x.second = NULL;
+			Mix_FreeMusic(music);
+			music = NULL;
 		}
+	soundMusic.clear();
 
 	delete instance;
 	instance = NULL;
@@ -59,7 +61,7 @@ Mix_Chunk* AudioManager::GetEffect(std::string name)
 	//if not, add it
 	auto it = soundEffects.find(name);
 	if (it == soundEffects.end())
-		soundEffects.insert(std::make_pair(name, Mix_LoadWAV(path.c_str())));
+		soundEffects.insert({ name, Mix_LoadWAV(path.c_str()) });
 	
 	if (soundEffects[name] == nullptr)	//check if it was created successfully
 	{
@@ -80,7 +82,7 @@ Mix_Music* AudioManager::GetMusic(std::string name)
 	//if not, add it
 	auto it = soundMusic.find(name);
 	if (it == soundMusic.end())
-		soundMusic.insert(std::make_pair(name, Mix_LoadMUS(path.c_str())));
+		soundMusic.insert({ name, Mix_LoadMUS(path.c_str()) });
 	
 	if (soundMusic[name] == nullptr)	//check if it was created successfully
 	{

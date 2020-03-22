@@ -1,12 +1,12 @@
-20
+22
 10
-BBBBBBBBBBBBBBBBBBBB
-B>>>>>>>>>>>>>>>>>>B
-B^                vB
-B^                vB
-B^R   WWWWWWWWWLT  G
-B^                vB
-B^                vB
-B^                vB
-B^<<<<<<<<<<<<<<<<vB
-BBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBB
+BCCCCCCCCB  BTTTTTTTTB
+BCCCCCCCCB  BTTTTTTTTB
+B  BBBBBBB  BBBBBBB  B
+B                    B
+B                    B
+B  BBBBBBB  BBBBBBB  B
+BTTTTTTTTB  BLLLLLLLLB
+BTTTTTTTTB RBLLLLLLLLB
+BBBBBBBBBBBGBBBBBBBBBB

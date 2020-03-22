@@ -21,8 +21,6 @@ public:
 	virtual Vector2& GetDirection() = 0;
 	virtual void Update() = 0;
 	virtual bool Collectible() = 0;
-	virtual bool GetFire() = 0;
-	virtual void SetFire() = 0;
 
 	bool brick;
 

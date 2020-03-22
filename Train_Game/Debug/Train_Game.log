@@ -1,2 +1,10 @@
-﻿  TrainComponent.cpp
+﻿  CollectibleItem.cpp
+  GameManager.cpp
+  GraphicsManager.cpp
+  LevelManager.cpp
+  Locomotive.cpp
+  NonCollectibleItem.cpp
+  TrainComponent.cpp
+  Train_Game.cpp
+  Generating Code...
   Train_Game.vcxproj -> D:\C++\zapoctovy_program\Train_Game\Debug\Train_Game.exe
