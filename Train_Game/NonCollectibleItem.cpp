@@ -1,4 +1,4 @@
-#include "NonCollectibleItem.h"
+#include "NonCollectibleItem.hpp"
 
 NonCollectibleItem::NonCollectibleItem(int x, int y, std::string name_, bool brick_, Vector2 dir) : Item(x, y, name_, brick_)
 {

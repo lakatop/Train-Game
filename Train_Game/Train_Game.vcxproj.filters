@@ -50,40 +50,40 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GraphicsManager.h">
+    <ClInclude Include="AudioManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="CollectibleItem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
+    <ClInclude Include="Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
+    <ClInclude Include="GameManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TrainComponent.h">
+    <ClInclude Include="GraphicsManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LevelManager.h">
+    <ClInclude Include="InputManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
+    <ClInclude Include="Item.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollectibleItem.h">
+    <ClInclude Include="LevelManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NonCollectibleItem.h">
+    <ClInclude Include="Locomotive.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
+    <ClInclude Include="NonCollectibleItem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Locomotive.h">
+    <ClInclude Include="Timer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h">
+    <ClInclude Include="TrainComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

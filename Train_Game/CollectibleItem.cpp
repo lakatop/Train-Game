@@ -1,4 +1,4 @@
-#include "CollectibleItem.h"
+#include "CollectibleItem.hpp"
 
 CollectibleItem::CollectibleItem(int x, int y, std::string name_) : Item(x, y, name_)
 {

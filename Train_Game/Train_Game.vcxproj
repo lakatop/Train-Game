@@ -168,18 +168,18 @@
     <ClCompile Include="Train_Game.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="CollectibleItem.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="GraphicsManager.h" />
-    <ClInclude Include="InputManager.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="LevelManager.h" />
-    <ClInclude Include="Locomotive.h" />
-    <ClInclude Include="NonCollectibleItem.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="TrainComponent.h" />
+    <ClInclude Include="AudioManager.hpp" />
+    <ClInclude Include="CollectibleItem.hpp" />
+    <ClInclude Include="Component.hpp" />
+    <ClInclude Include="GameManager.hpp" />
+    <ClInclude Include="GraphicsManager.hpp" />
+    <ClInclude Include="InputManager.hpp" />
+    <ClInclude Include="Item.hpp" />
+    <ClInclude Include="LevelManager.hpp" />
+    <ClInclude Include="Locomotive.hpp" />
+    <ClInclude Include="NonCollectibleItem.hpp" />
+    <ClInclude Include="Timer.hpp" />
+    <ClInclude Include="TrainComponent.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

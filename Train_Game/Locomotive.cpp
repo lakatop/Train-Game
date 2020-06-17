@@ -1,4 +1,4 @@
-#include "Locomotive.h"
+#include "Locomotive.hpp"
 
 Locomotive* Locomotive::instance = NULL;
 

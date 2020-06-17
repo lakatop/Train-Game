@@ -1,4 +1,4 @@
-#include "TrainComponent.h"
+#include "TrainComponent.hpp"
 
 TrainComponent::TrainComponent(int x, int y, std::string& name_, Vector2& move_, bool last_, Component* par)
 {

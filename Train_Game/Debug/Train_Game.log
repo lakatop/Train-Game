@@ -1,9 +1,11 @@
 ﻿  CollectibleItem.cpp
   GameManager.cpp
   GraphicsManager.cpp
+  InputManager.cpp
   LevelManager.cpp
   Locomotive.cpp
   NonCollectibleItem.cpp
+  Timer.cpp
   TrainComponent.cpp
   Train_Game.cpp
   Generating Code...

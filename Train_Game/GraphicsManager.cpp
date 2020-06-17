@@ -1,4 +1,4 @@
-#include "GraphicsManager.h"
+#include "GraphicsManager.hpp"
 
 GraphicsManager* GraphicsManager::instance = NULL;
 

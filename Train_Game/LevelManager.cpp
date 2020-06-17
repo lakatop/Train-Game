@@ -1,4 +1,4 @@
-#include "LevelManager.h"
+#include "LevelManager.hpp"
 
 LevelManager* LevelManager::instance = NULL;
 

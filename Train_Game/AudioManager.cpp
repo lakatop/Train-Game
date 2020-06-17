@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#include "AudioManager.hpp"
 
 AudioManager* AudioManager::instance = NULL;
 
